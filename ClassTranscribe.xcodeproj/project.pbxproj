@@ -1,0 +1,636 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		BF48D85B2AE2E47900B5208B /* SwiftWhisper in Frameworks */ = {isa = PBXBuildFile; productRef = BF48D85A2AE2E47900B5208B /* SwiftWhisper */; };
+		BF48D85D2AE2F54800B5208B /* AudioConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF48D85C2AE2F54800B5208B /* AudioConverter.swift */; };
+		BF82C1B82AD5AFF1006E6DB8 /* MenuBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF82C1B72AD5AFF1006E6DB8 /* MenuBar.swift */; };
+		BF82C1BE2AD5AFF3006E6DB8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BF82C1BD2AD5AFF3006E6DB8 /* Assets.xcassets */; };
+		BF82C1C12AD5AFF3006E6DB8 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BF82C1C02AD5AFF3006E6DB8 /* Preview Assets.xcassets */; };
+		BF82C1CC2AD5AFF3006E6DB8 /* ClassTranscribeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF82C1CB2AD5AFF3006E6DB8 /* ClassTranscribeTests.swift */; };
+		BF82C1D62AD5AFF3006E6DB8 /* ClassTranscribeUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF82C1D52AD5AFF3006E6DB8 /* ClassTranscribeUITests.swift */; };
+		BF82C1D82AD5AFF3006E6DB8 /* ClassTranscribeUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF82C1D72AD5AFF3006E6DB8 /* ClassTranscribeUITestsLaunchTests.swift */; };
+		BF82C1E92AD5C592006E6DB8 /* Microphone.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF82C1E82AD5C592006E6DB8 /* Microphone.swift */; };
+		BF82C1EB2AD5D3F4006E6DB8 /* Control.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF82C1EA2AD5D3F4006E6DB8 /* Control.swift */; };
+		BFBC68392AE3269B002964DA /* AudioKit in Frameworks */ = {isa = PBXBuildFile; productRef = BFBC68382AE3269B002964DA /* AudioKit */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		BF82C1C82AD5AFF3006E6DB8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BF82C1AC2AD5AFF1006E6DB8 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BF82C1B32AD5AFF1006E6DB8;
+			remoteInfo = ClassTranscribe;
+		};
+		BF82C1D22AD5AFF3006E6DB8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BF82C1AC2AD5AFF1006E6DB8 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BF82C1B32AD5AFF1006E6DB8;
+			remoteInfo = ClassTranscribe;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		BF48D85C2AE2F54800B5208B /* AudioConverter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioConverter.swift; sourceTree = "<group>"; };
+		BF82C1B42AD5AFF1006E6DB8 /* ClassTranscribe.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ClassTranscribe.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		BF82C1B72AD5AFF1006E6DB8 /* MenuBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBar.swift; sourceTree = "<group>"; };
+		BF82C1BD2AD5AFF3006E6DB8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		BF82C1C02AD5AFF3006E6DB8 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		BF82C1C22AD5AFF3006E6DB8 /* ClassTranscribe.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ClassTranscribe.entitlements; sourceTree = "<group>"; };
+		BF82C1C72AD5AFF3006E6DB8 /* ClassTranscribeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ClassTranscribeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		BF82C1CB2AD5AFF3006E6DB8 /* ClassTranscribeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClassTranscribeTests.swift; sourceTree = "<group>"; };
+		BF82C1D12AD5AFF3006E6DB8 /* ClassTranscribeUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ClassTranscribeUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		BF82C1D52AD5AFF3006E6DB8 /* ClassTranscribeUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClassTranscribeUITests.swift; sourceTree = "<group>"; };
+		BF82C1D72AD5AFF3006E6DB8 /* ClassTranscribeUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClassTranscribeUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		BF82C1E82AD5C592006E6DB8 /* Microphone.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Microphone.swift; sourceTree = "<group>"; };
+		BF82C1EA2AD5D3F4006E6DB8 /* Control.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Control.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		BF82C1B12AD5AFF1006E6DB8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BFBC68392AE3269B002964DA /* AudioKit in Frameworks */,
+				BF48D85B2AE2E47900B5208B /* SwiftWhisper in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BF82C1C42AD5AFF3006E6DB8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BF82C1CE2AD5AFF3006E6DB8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		BF82C1AB2AD5AFF1006E6DB8 = {
+			isa = PBXGroup;
+			children = (
+				BF82C1B62AD5AFF1006E6DB8 /* ClassTranscribe */,
+				BF82C1CA2AD5AFF3006E6DB8 /* ClassTranscribeTests */,
+				BF82C1D42AD5AFF3006E6DB8 /* ClassTranscribeUITests */,
+				BF82C1B52AD5AFF1006E6DB8 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		BF82C1B52AD5AFF1006E6DB8 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				BF82C1B42AD5AFF1006E6DB8 /* ClassTranscribe.app */,
+				BF82C1C72AD5AFF3006E6DB8 /* ClassTranscribeTests.xctest */,
+				BF82C1D12AD5AFF3006E6DB8 /* ClassTranscribeUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		BF82C1B62AD5AFF1006E6DB8 /* ClassTranscribe */ = {
+			isa = PBXGroup;
+			children = (
+				BF82C1E82AD5C592006E6DB8 /* Microphone.swift */,
+				BF82C1B72AD5AFF1006E6DB8 /* MenuBar.swift */,
+				BF82C1EA2AD5D3F4006E6DB8 /* Control.swift */,
+				BF48D85C2AE2F54800B5208B /* AudioConverter.swift */,
+				BF82C1BD2AD5AFF3006E6DB8 /* Assets.xcassets */,
+				BF82C1C22AD5AFF3006E6DB8 /* ClassTranscribe.entitlements */,
+				BF82C1BF2AD5AFF3006E6DB8 /* Preview Content */,
+			);
+			path = ClassTranscribe;
+			sourceTree = "<group>";
+		};
+		BF82C1BF2AD5AFF3006E6DB8 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				BF82C1C02AD5AFF3006E6DB8 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		BF82C1CA2AD5AFF3006E6DB8 /* ClassTranscribeTests */ = {
+			isa = PBXGroup;
+			children = (
+				BF82C1CB2AD5AFF3006E6DB8 /* ClassTranscribeTests.swift */,
+			);
+			path = ClassTranscribeTests;
+			sourceTree = "<group>";
+		};
+		BF82C1D42AD5AFF3006E6DB8 /* ClassTranscribeUITests */ = {
+			isa = PBXGroup;
+			children = (
+				BF82C1D52AD5AFF3006E6DB8 /* ClassTranscribeUITests.swift */,
+				BF82C1D72AD5AFF3006E6DB8 /* ClassTranscribeUITestsLaunchTests.swift */,
+			);
+			path = ClassTranscribeUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		BF82C1B32AD5AFF1006E6DB8 /* ClassTranscribe */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BF82C1DB2AD5AFF3006E6DB8 /* Build configuration list for PBXNativeTarget "ClassTranscribe" */;
+			buildPhases = (
+				BF82C1B02AD5AFF1006E6DB8 /* Sources */,
+				BF82C1B12AD5AFF1006E6DB8 /* Frameworks */,
+				BF82C1B22AD5AFF1006E6DB8 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ClassTranscribe;
+			packageProductDependencies = (
+				BF48D85A2AE2E47900B5208B /* SwiftWhisper */,
+				BFBC68382AE3269B002964DA /* AudioKit */,
+			);
+			productName = ClassTranscribe;
+			productReference = BF82C1B42AD5AFF1006E6DB8 /* ClassTranscribe.app */;
+			productType = "com.apple.product-type.application";
+		};
+		BF82C1C62AD5AFF3006E6DB8 /* ClassTranscribeTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BF82C1DE2AD5AFF3006E6DB8 /* Build configuration list for PBXNativeTarget "ClassTranscribeTests" */;
+			buildPhases = (
+				BF82C1C32AD5AFF3006E6DB8 /* Sources */,
+				BF82C1C42AD5AFF3006E6DB8 /* Frameworks */,
+				BF82C1C52AD5AFF3006E6DB8 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				BF82C1C92AD5AFF3006E6DB8 /* PBXTargetDependency */,
+			);
+			name = ClassTranscribeTests;
+			productName = ClassTranscribeTests;
+			productReference = BF82C1C72AD5AFF3006E6DB8 /* ClassTranscribeTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		BF82C1D02AD5AFF3006E6DB8 /* ClassTranscribeUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BF82C1E12AD5AFF3006E6DB8 /* Build configuration list for PBXNativeTarget "ClassTranscribeUITests" */;
+			buildPhases = (
+				BF82C1CD2AD5AFF3006E6DB8 /* Sources */,
+				BF82C1CE2AD5AFF3006E6DB8 /* Frameworks */,
+				BF82C1CF2AD5AFF3006E6DB8 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				BF82C1D32AD5AFF3006E6DB8 /* PBXTargetDependency */,
+			);
+			name = ClassTranscribeUITests;
+			productName = ClassTranscribeUITests;
+			productReference = BF82C1D12AD5AFF3006E6DB8 /* ClassTranscribeUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		BF82C1AC2AD5AFF1006E6DB8 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					BF82C1B32AD5AFF1006E6DB8 = {
+						CreatedOnToolsVersion = 15.0;
+					};
+					BF82C1C62AD5AFF3006E6DB8 = {
+						CreatedOnToolsVersion = 15.0;
+						TestTargetID = BF82C1B32AD5AFF1006E6DB8;
+					};
+					BF82C1D02AD5AFF3006E6DB8 = {
+						CreatedOnToolsVersion = 15.0;
+						TestTargetID = BF82C1B32AD5AFF1006E6DB8;
+					};
+				};
+			};
+			buildConfigurationList = BF82C1AF2AD5AFF1006E6DB8 /* Build configuration list for PBXProject "ClassTranscribe" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = BF82C1AB2AD5AFF1006E6DB8;
+			packageReferences = (
+				BF48D8592AE2E47900B5208B /* XCRemoteSwiftPackageReference "SwiftWhisper" */,
+				BFBC68372AE3269B002964DA /* XCRemoteSwiftPackageReference "AudioKit" */,
+			);
+			productRefGroup = BF82C1B52AD5AFF1006E6DB8 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				BF82C1B32AD5AFF1006E6DB8 /* ClassTranscribe */,
+				BF82C1C62AD5AFF3006E6DB8 /* ClassTranscribeTests */,
+				BF82C1D02AD5AFF3006E6DB8 /* ClassTranscribeUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		BF82C1B22AD5AFF1006E6DB8 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BF82C1C12AD5AFF3006E6DB8 /* Preview Assets.xcassets in Resources */,
+				BF82C1BE2AD5AFF3006E6DB8 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BF82C1C52AD5AFF3006E6DB8 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BF82C1CF2AD5AFF3006E6DB8 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		BF82C1B02AD5AFF1006E6DB8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BF82C1E92AD5C592006E6DB8 /* Microphone.swift in Sources */,
+				BF82C1EB2AD5D3F4006E6DB8 /* Control.swift in Sources */,
+				BF48D85D2AE2F54800B5208B /* AudioConverter.swift in Sources */,
+				BF82C1B82AD5AFF1006E6DB8 /* MenuBar.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BF82C1C32AD5AFF3006E6DB8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BF82C1CC2AD5AFF3006E6DB8 /* ClassTranscribeTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BF82C1CD2AD5AFF3006E6DB8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BF82C1D82AD5AFF3006E6DB8 /* ClassTranscribeUITestsLaunchTests.swift in Sources */,
+				BF82C1D62AD5AFF3006E6DB8 /* ClassTranscribeUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		BF82C1C92AD5AFF3006E6DB8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BF82C1B32AD5AFF1006E6DB8 /* ClassTranscribe */;
+			targetProxy = BF82C1C82AD5AFF3006E6DB8 /* PBXContainerItemProxy */;
+		};
+		BF82C1D32AD5AFF3006E6DB8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BF82C1B32AD5AFF1006E6DB8 /* ClassTranscribe */;
+			targetProxy = BF82C1D22AD5AFF3006E6DB8 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		BF82C1D92AD5AFF3006E6DB8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		BF82C1DA2AD5AFF3006E6DB8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		BF82C1DC2AD5AFF3006E6DB8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = ClassTranscribe/ClassTranscribe.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"ClassTranscribe/Preview Content\"";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSUIElement = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "The microphone is required to record.";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = me.yldbouk.ClassTranscribe;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		BF82C1DD2AD5AFF3006E6DB8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = ClassTranscribe/ClassTranscribe.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"ClassTranscribe/Preview Content\"";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSUIElement = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "The microphone is required to record.";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = me.yldbouk.ClassTranscribe;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		BF82C1DF2AD5AFF3006E6DB8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = me.yldbouk.ClassTranscribeTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ClassTranscribe.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ClassTranscribe";
+			};
+			name = Debug;
+		};
+		BF82C1E02AD5AFF3006E6DB8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = me.yldbouk.ClassTranscribeTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ClassTranscribe.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ClassTranscribe";
+			};
+			name = Release;
+		};
+		BF82C1E22AD5AFF3006E6DB8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = me.yldbouk.ClassTranscribeUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = ClassTranscribe;
+			};
+			name = Debug;
+		};
+		BF82C1E32AD5AFF3006E6DB8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = me.yldbouk.ClassTranscribeUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = ClassTranscribe;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		BF82C1AF2AD5AFF1006E6DB8 /* Build configuration list for PBXProject "ClassTranscribe" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BF82C1D92AD5AFF3006E6DB8 /* Debug */,
+				BF82C1DA2AD5AFF3006E6DB8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BF82C1DB2AD5AFF3006E6DB8 /* Build configuration list for PBXNativeTarget "ClassTranscribe" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BF82C1DC2AD5AFF3006E6DB8 /* Debug */,
+				BF82C1DD2AD5AFF3006E6DB8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BF82C1DE2AD5AFF3006E6DB8 /* Build configuration list for PBXNativeTarget "ClassTranscribeTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BF82C1DF2AD5AFF3006E6DB8 /* Debug */,
+				BF82C1E02AD5AFF3006E6DB8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BF82C1E12AD5AFF3006E6DB8 /* Build configuration list for PBXNativeTarget "ClassTranscribeUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BF82C1E22AD5AFF3006E6DB8 /* Debug */,
+				BF82C1E32AD5AFF3006E6DB8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		BF48D8592AE2E47900B5208B /* XCRemoteSwiftPackageReference "SwiftWhisper" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/exPHAT/SwiftWhisper.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.0;
+			};
+		};
+		BFBC68372AE3269B002964DA /* XCRemoteSwiftPackageReference "AudioKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/AudioKit/AudioKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.6.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		BF48D85A2AE2E47900B5208B /* SwiftWhisper */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BF48D8592AE2E47900B5208B /* XCRemoteSwiftPackageReference "SwiftWhisper" */;
+			productName = SwiftWhisper;
+		};
+		BFBC68382AE3269B002964DA /* AudioKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BFBC68372AE3269B002964DA /* XCRemoteSwiftPackageReference "AudioKit" */;
+			productName = AudioKit;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = BF82C1AC2AD5AFF1006E6DB8 /* Project object */;
+}
