@@ -38,12 +38,12 @@ class MenuBarLabel: ObservableObject {
         
         case .Record:
 //            startTime = Date.now
-//            icon = HStack() {
-//                Image(systemName: "record.circle")
-//                Text(timerText)
-//                    
-//            }
-//            buttonLabel.recording = "End Recording"
+            icon = HStack() {
+                Image(systemName: "record.circle")
+                Text(timerText)
+                    
+            }
+            buttonLabel.recording = "End Recording"
         break
        
         
@@ -83,7 +83,6 @@ struct MenuBar: App {
         MenuBarExtra() {
             Button(menuLabel.buttonLabel.recording) { controller!.AttemptUpdateState(requested: .Record) } // TODO: Implement recording properly
                 .keyboardShortcut("R")
-                .disabled(true)
             
             Button(menuLabel.buttonLabel.transcription) {controller!.AttemptUpdateState(requested: .Transcribe) }
                 .keyboardShortcut("E")
