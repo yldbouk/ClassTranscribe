@@ -48,9 +48,11 @@ class Control : WhisperDelegate {
                     print(error)
                     microphone.stop()
                 }
+                menuLabel.manageTimer()
             } else if(currentState == .Record) {
                 print("Stopping Recording")
                 microphone.stop()
+                menuLabel.manageTimer(stop: true)
             }
         } else if(requested == .Transcribe) {
             if(currentState == .Idle) {
@@ -116,7 +118,7 @@ class Control : WhisperDelegate {
     var resData:String = "WEBVTT"
         segments.forEach { segment in
             // 00:00:00.000
-            resData += "\n\n\(formatSeconds(timems: segment.startTime)) --> \(formatSeconds(timems: segment.endTime))\n\(segment.text.dropFirst())\n"
+            resData += "\n\n\(formatSecondsFull(timems: segment.startTime)) --> \(formatSecondsFull(timems: segment.endTime))\n\(segment.text.dropFirst())\n"
 //            print(formatSeconds(timems: segment.startTime), "-->", formatSeconds(timems: segment.endTime))
 //            print(segment.text)
         }
@@ -139,7 +141,7 @@ class Control : WhisperDelegate {
         print("\n\nERROR:", error)
     }
     
-    func formatSeconds(timems: Int) -> String {
+    func formatSecondsFull(timems: Int) -> String {
         // 00:00:00.000
         let ms  = timems % 1000
         let sec = timems / 1000
