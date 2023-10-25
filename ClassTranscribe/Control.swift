@@ -16,43 +16,44 @@ class Control : WhisperDelegate {
         case Idle, Record, RecordingComplete, Transcribe, TranscribingComplete, Waiting
     }
     private var currentState: AppState = .Idle
-//    var microphone: Microphone! = nil
+    var microphone: Microphone! = nil
     var menuLabel: MenuBarLabel! = nil
     init(menuBar: MenuBarLabel) {
         self.menuLabel = menuBar
-//        Task { @MainActor in
-//            InitializeMicrophone()
-//        }
+        Task { @MainActor in
+            InitializeMicrophone()
+        }
         
     }
     
-//    func InitializeMicrophone(){
-//        print("Initializing Recording System")
-//        microphone = Microphone(controller: self)
-//        if(microphone.getState() == Microphone.State.None) {
-//            menuLabel.update(to: .Idle)
-//        }
-//    }
+    func InitializeMicrophone(){
+        print("Initializing Recording System")
+        microphone = Microphone(controller: self)
+        if(microphone.getState() == Microphone.State.None) {
+            menuLabel.update(to: .Idle)
+        }
+    }
     
     func AttemptUpdateState(requested: AppState) {
         
         if(requested == .Record) {
-//            if(currentState == .Idle) { // Begin Recording
-//                print("Starting Recording...")
-//                currentState = requested
-//                menuLabel.update(to: .Record)
-//                do {
-//                    try microphone.record()
-//                }
-//                catch {
-//                    print(error)
-//                    microphone.stop()
-//                }
-//            } else if(currentState == .Record) {
-//                print("Stopping Recording")
-//                microphone.stop()
-//                menuLabel.update(to: .Idle)
-//            }
+            if(currentState == .Idle) { // Begin Recording
+                print("Starting Recording...")
+                currentState = requested
+                menuLabel.update(to: .Record)
+                do {
+                    try microphone.record()
+                }
+                catch {
+                    print(error)
+                    microphone.stop()
+                }
+                menuLabel.manageTimer()
+            } else if(currentState == .Record) {
+                print("Stopping Recording")
+                microphone.stop()
+                menuLabel.manageTimer(stop: true)
+            }
         } else if(requested == .Transcribe) {
             if(currentState == .Idle) {
                 currentState = .Transcribe
@@ -63,17 +64,7 @@ class Control : WhisperDelegate {
                 if (panel.runModal() != .OK) { currentState = .Idle; return }
                 print(panel.url!.absoluteString)
                 
-                let appsupport = FileManager.default.urls(for:.applicationSupportDirectory, in: .userDomainMask).first
-                let model: URL = appsupport!.appending(path: "ClassTranscribe/model.bin")
-
-                Task {
-                    await MainActor.run { menuLabel.update(to: .Transcribe) }
-                    let whisper = Whisper(fromFileURL: model)
-                    whisper.delegate = self
-                    whisper.params.language = .english
-                    let frames = await AudioConverter.convertAudioFileToPCMArray(fileURL: panel.url!)
-                     _=try await whisper.transcribe(audioFrames: frames)
-                }
+                Task { await transcribe(url: panel.url!) }
               
             } else if(currentState == .Transcribe) {
                 // TODO: Implement cancel transcribe
@@ -81,6 +72,32 @@ class Control : WhisperDelegate {
             
         }
     }
+    
+    func transcribe(frames: [Float]) async {
+        let appsupport = FileManager.default.urls(for:.applicationSupportDirectory, in: .userDomainMask).first
+        let model: URL = appsupport!.appending(path: "ClassTranscribe/model.bin")
+        
+        await MainActor.run { menuLabel.update(to: .Transcribe) }
+        let whisper = Whisper(fromFileURL: model)
+        whisper.delegate = self
+        whisper.params.language = .english
+        _=try! await whisper.transcribe(audioFrames: frames)
+    }
+    
+    func transcribe(url: URL) async {
+        let appsupport = FileManager.default.urls(for:.applicationSupportDirectory, in: .userDomainMask).first
+        let model: URL = appsupport!.appending(path: "ClassTranscribe/model.bin")
+        
+        await MainActor.run { menuLabel.update(to: .Transcribe) }
+        let whisper = Whisper(fromFileURL: model)
+        whisper.delegate = self
+        whisper.params.language = .english
+        let frames = FormatConverter.convertAudioFileToPCMArray(inputURL: url)
+        _=try! await whisper.transcribe(audioFrames: frames!)
+    }
+    
+    
+    
     
     // Progress updates as a percentage from 0-1
     func whisper(_ aWhisper: Whisper, didUpdateProgress progress: Double) {
@@ -101,7 +118,7 @@ class Control : WhisperDelegate {
     var resData:String = "WEBVTT"
         segments.forEach { segment in
             // 00:00:00.000
-            resData += "\n\n\(formatSeconds(timems: segment.startTime)) --> \(formatSeconds(timems: segment.endTime))\n\(segment.text.dropFirst())\n"
+            resData += "\n\n\(formatSecondsFull(timems: segment.startTime)) --> \(formatSecondsFull(timems: segment.endTime))\n\(segment.text.dropFirst())\n"
 //            print(formatSeconds(timems: segment.startTime), "-->", formatSeconds(timems: segment.endTime))
 //            print(segment.text)
         }
@@ -124,7 +141,7 @@ class Control : WhisperDelegate {
         print("\n\nERROR:", error)
     }
     
-    func formatSeconds(timems: Int) -> String {
+    func formatSecondsFull(timems: Int) -> String {
         // 00:00:00.000
         let ms  = timems % 1000
         let sec = timems / 1000
