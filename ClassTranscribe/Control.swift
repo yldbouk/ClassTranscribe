@@ -38,9 +38,9 @@ class Control {
         schedule = Schedule()
         if (schedule != nil) {
             currentState = .Waiting
-            menuLabel.update(to: .Waiting)
-            waiter = ScheduleWait(menuLabel: menuBar)
             nextClass = schedule.nextMeeting()
+            menuLabel.update(to: .Waiting, forOperation: nextClass!.course)
+            waiter = ScheduleWait(menuLabel: menuBar)
             waiter.ScheduleRecording(meeting: nextClass!)
         } else { menuLabel.update(to: .Idle) }
     }
@@ -53,8 +53,8 @@ class Control {
             menuLabel.update(to: .Idle)
         } else {
             currentState = .Waiting
-            menuLabel.update(to: .Waiting)
             nextClass = schedule.nextMeeting()
+            menuLabel.update(to: .Waiting, forOperation: nextClass?.course)
             waiter.ScheduleRecording(meeting: nextClass!)
         }
     }
@@ -65,7 +65,7 @@ class Control {
                 print("Starting Recording...")
                 currentState = requested
                 menuLabel.update(to: .Record)
-                entries.append(Entry(destination: nextClass?.course, menuLabel: menuLabel))
+                entries.append(Entry(destination: nextClass, menuLabel: menuLabel))
                 menuLabel.manageTimer()
                 
             } else if(currentState == .Record) {
@@ -86,7 +86,7 @@ class Control {
                 if (panel.runModal() != .OK) { currentState = originalState; return }
                 print(panel.url!.absoluteString)
                 
-                entries.append(Entry(destination: nextClass?.course, withExistingRecording: panel.url!, menuLabel: menuLabel))
+                entries.append(Entry(destination: nextClass, withExistingRecording: panel.url!, menuLabel: menuLabel))
               
             } else if(currentState == .Transcribe) {
                 Entry.latest.stopTranscription()
