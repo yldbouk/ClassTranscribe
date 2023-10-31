@@ -13,7 +13,7 @@ public class Microphone : NSObject, AVAudioRecorderDelegate {
         case None, Record, Play
     }
     
-    var controller: Control
+    var entry: Entry!
     var url: URL?
     
     private var state: State = .None
@@ -23,13 +23,8 @@ public class Microphone : NSObject, AVAudioRecorderDelegate {
     private var recorder: AVAudioRecorder?
     private var dateF = DateFormatter()
     
-  
-    // MARK: - Initializers
-    init(controller: Control) {
-        self.controller = controller
-        dateF.dateStyle = .medium
-        dateF.timeStyle = .medium
-        }
+    init(entry: Entry) { self.entry = entry }
+    
     
     // MARK: - Record
     private func prepare() throws -> URL {
@@ -42,6 +37,9 @@ public class Microphone : NSObject, AVAudioRecorderDelegate {
             AVLinearPCMIsFloatKey: false
         ]
         
+        dateF.dateStyle = .medium
+        dateF.timeStyle = .medium
+        
         let filename = dateF.string(from: Date()) + ".wav"
         url = FileManager.default.urls(for:.documentDirectory, in: .userDomainMask).first!.appendingPathComponent(filename)
         
@@ -52,7 +50,7 @@ public class Microphone : NSObject, AVAudioRecorderDelegate {
     }
 
     public func record() throws {
-        if recorder == nil { print("Saving to \(try prepare())") }
+        if recorder == nil { print("Starting recording to \(try prepare())") }
         recorder?.record()
         state = .Record
     }
@@ -67,7 +65,7 @@ public class Microphone : NSObject, AVAudioRecorderDelegate {
 
     // MARK: - Delegates
     public func audioRecorderDidFinishRecording(_ recorder: AVAudioRecorder, successfully flag: Bool) {
-        
+        // TODO: guard sucessfully
         let data = try! Data(contentsOf: recorder.url) // Handle error here
 
         let floats = stride(from: 44, to: data.count, by: 2).map {
@@ -76,8 +74,7 @@ public class Microphone : NSObject, AVAudioRecorderDelegate {
                 return max(-1.0, min(Float(short) / 32767.0, 1.0))
             }
         }
-        Task { await controller.transcribe(frames: floats) }
-        controller.AttemptUpdateState(requested: .RecordingComplete)
+        Task { await entry.transcribe(frames: floats) }
     }
     
     public func audioRecorderEncodeErrorDidOccur(_ recorder: AVAudioRecorder, error: Error?) {

@@ -8,29 +8,23 @@
 import SwiftUI
 
 class MenuBarLabel: ObservableObject {
-    
-    // TODO: fix text and image misalignment
-//    @Published var icon: HStack = HStack(spacing: 0) { Image(systemName: "waveform"); Text("Loading") }
-//    @Published var timerText: String = "0:00"
-    
-    var timer: Timer?
+    var recordingTimer: Timer?
+    var waitingTimer: Timer?
     var startTime: Date!
     private let formatter = DateFormatter()
-    let timer2 = Timer.publish(every: 0.01, on: .main, in: .common).autoconnect()
     
     public func manageTimer(stop: Bool = false) {
         guard !stop else {
             print("Stopping timer..")
-            timer?.invalidate()
+            recordingTimer?.invalidate()
             return
         }
         print("Starting timer..")
         startTime = Date.now
-        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
-            print("timer update")
+        recordingTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
             self.labels.icon.text = self.formatRelativeTime(seconds: Int(Date().timeIntervalSince(self.startTime)))
         }
-        timer?.tolerance = 0.1 // test higher values
+        recordingTimer?.tolerance = 0.1 // test higher values
     }
     
     @Published var labels =
@@ -52,7 +46,19 @@ class MenuBarLabel: ObservableObject {
             return String(format: "%d:%02d:%02d", hr, min, sec)
         }
         return String(format: "%d:%02d", min, sec)
+    }
+    
+    func getLabelForWaiting(seconds: Int) -> String {
+        let hr = seconds / 3600
         
+        if(hr > 24) { return String(seconds / 86400) + (hr > 48 ? "days" : "day")}
+        else if(hr > 12) { return "1 day" }
+        else if (hr >= 1) { return String(hr) + (hr != 1 ? "hrs" : "hr") }
+        else if (seconds > 900) { return String(seconds / 60) + "mins" }
+        else { return String(format: "%d:%02d", seconds / 60, seconds % 60) }
+    }
+    
+    func scheduleWaitingLabel(startsIn: Int) {
         
     }
     
@@ -77,7 +83,7 @@ class MenuBarLabel: ObservableObject {
 //                Text(self.timerText)
 //            }
             labels.icon.image = "record.circle"
-            labels.icon.text = "7:00"
+            labels.icon.text = "0:00"
             labels.recording = "End Recording"
         break
        
@@ -91,7 +97,7 @@ class MenuBarLabel: ObservableObject {
 //                Text(percentage)
 //            }
             labels.icon.image = "recordingtape.circle.fill"
-            labels.icon.text = percentage // uh oh
+            labels.icon.text = percentage 
             labels.transcription = "Stop Transcribing"
         break
         
@@ -99,12 +105,8 @@ class MenuBarLabel: ObservableObject {
         
         
         case .Waiting:
-//            icon = HStack() {
-//                Image(systemName: "timer")
-//                Text("Idle")
-//            }
             labels.icon.image = "timer"
-            labels.icon.text = "Idle"
+//            labels.icon.text = "Idle"
             break
         }
     }
