@@ -22,13 +22,16 @@ class MenuBarLabel: ObservableObject {
         print("Starting timer..")
         startTime = Date.now
         recordingTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
-            self.labels.icon.text = self.formatRelativeTime(seconds: Int(Date().timeIntervalSince(self.startTime)))
+            let time = self.formatRelativeTime(seconds: Int(Date().timeIntervalSince(self.startTime)))
+            self.labels.icon.text = time
+            self.labels.status = "Recording, \(time) elapsed"
         }
         recordingTimer?.tolerance = 0.1 // test higher values
     }
     
     @Published var labels =
     (
+        status: "Loading...",
         recording: "Begin Recording",
         transcription: "Transcribe Existing Recording...",
         icon: (
@@ -62,28 +65,24 @@ class MenuBarLabel: ObservableObject {
         
     }
     
-    func update(to: Control.AppState, percentage: String = "...") {
+    func update(to: Control.AppState, percentage: String = "...", forOperation: String? = nil) {
+        var forOperation = forOperation
+        if forOperation != nil { forOperation = " for \(forOperation!)" }
         print("Updating MenuBar Label to \(to), \(percentage)")
         switch (to) {
         case .Idle:
-//            icon = HStack() {
-//                Image(systemName: "waveform")
-//                Text("Idle")
-//            }
             labels.icon.image = "waveform"
             labels.icon.text = "Idle"
+            labels.status = "Idle"
             labels.recording = "Begin Recording"
             labels.transcription = "Transcribe Existing Recording..."
         break
         
         
         case .Record:
-//            icon = HStack() {
-//                Image(systemName: "record.circle")
-//                Text(self.timerText)
-//            }
             labels.icon.image = "record.circle"
             labels.icon.text = "0:00"
+            labels.status = "Recording\(forOperation ?? "") 0:00 elapsed"
             labels.recording = "End Recording"
         break
        
@@ -92,12 +91,15 @@ class MenuBarLabel: ObservableObject {
         
         
         case .Transcribe:
-//            icon = HStack() {
-//                Image(systemName: "recordingtape.circle.fill")
-//                Text(percentage)
-//            }
             labels.icon.image = "recordingtape.circle.fill"
             labels.icon.text = percentage 
+            if(percentage.starts(with: ".")) {
+                labels.status = "Transcribing\(forOperation!), preparing"
+            } else if(percentage.starts(with: "100")) {
+                labels.status = "Transcribing\(forOperation!), finalizing"
+            } else {
+                labels.status = "Transcribing\(forOperation!), \(percentage) complete"
+            }
             labels.transcription = "Stop Transcribing"
         break
         
@@ -106,7 +108,10 @@ class MenuBarLabel: ObservableObject {
         
         case .Waiting:
             labels.icon.image = "timer"
-//            labels.icon.text = "Idle"
+            labels.icon.text = percentage
+            labels.status = "Waiting\(forOperation!), \(percentage) remaining"
+            labels.recording = "Begin Recording"
+            labels.transcription = "Transcribe Existing Recording..."
             break
         }
     }
@@ -122,9 +127,14 @@ struct MenuBar: App {
     var body: some Scene {
         // WindowGroup { ContentView() }
         MenuBarExtra() {
+            Text(menuLabel.labels.status)
+            
+            
+            Divider()
+            
+            
             Button(menuLabel.labels.recording) { controller!.AttemptUpdateState(requested: .Record) } // TODO: Implement recording properly
                 .keyboardShortcut("R")
-            
             Button(menuLabel.labels.transcription) {controller!.AttemptUpdateState(requested: .Transcribe) }
                 .keyboardShortcut("E")
             
@@ -135,10 +145,8 @@ struct MenuBar: App {
             Button("Settings...") { NSApplication.shared.terminate(nil) } // TODO: Create settings view
                 .keyboardShortcut(",")
                 .disabled(true)
-            
             Button("Quit") { NSApplication.shared.terminate(nil) }
                 .keyboardShortcut("q")
-            
         } label: {
             HStack(spacing: 0) {
                 Image(systemName: menuLabel.labels.icon.image)

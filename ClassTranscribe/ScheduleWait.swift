@@ -6,11 +6,12 @@
 //
 
 import Foundation
-
+import UserNotifications
 
 class ScheduleWait {
     let queue = DispatchQueue(label: "me.yldbouk.schedulequeue", qos: .utility)
     let menuLabel: MenuBarLabel
+    var meetingName: String!
 
     init(menuLabel: MenuBarLabel) {
         self.menuLabel = menuLabel
@@ -19,18 +20,23 @@ class ScheduleWait {
     func updateMenuIcon(_ text: String) {
         print("[ScheduleWait] Updating menu icon to \(text)")
         DispatchQueue.main.async {
-            self.menuLabel.labels.icon.text = text
+            self.menuLabel.update(to: .Waiting, percentage: text, forOperation: self.meetingName)
+//            self.menuLabel.labels.icon.text = text
+//            self.menuLabel.labels.status = "Waiting For Class... \(text) remain"
         }
     }
     
     
     
     func ScheduleRecording(meeting: Schedule.Meeting) {
+        meetingName = meeting.course
         var seconds = Int(meeting.startsAt.relativeSeconds!)
+        
 //        var currentTime =
 //        var seconds = Int(target! - Date.now.timeIntervalSince1970)
         
         var alignSeconds: Int = 0
+        let alignMilliseconds = meeting.startsAt.relativeSeconds!.truncatingRemainder(dividingBy: 1)
         
         var hr = (seconds) / 3600
         
@@ -81,7 +87,7 @@ class ScheduleWait {
             queue.async {
 //                currentTime += alignSeconds
                 print("[ScheduleWait] waiting \(alignSeconds) seconds")
-                Thread.sleep(forTimeInterval: Double(alignSeconds))
+                Thread.sleep(forTimeInterval: Double(alignSeconds) - (1-alignMilliseconds))
             }
         }
         if(loopDays != 0) {
@@ -126,6 +132,16 @@ class ScheduleWait {
             }
         }
         queue.async {
+            
+            // notify user
+            let content = UNMutableNotificationContent()
+            content.title = "\(meeting.course) Meeting Soon"
+            content.body = "Your course is meeting soon."
+            let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
+            UNUserNotificationCenter.current().add(request) { (error) in
+               if error != nil { print("ERROR with notification warn: \(error!)") }
+            }
+            
             print("[ScheduleWait] waiting \(seconds) seconds")
             while loopSeconds+1 > 0 {
                 Thread.sleep(forTimeInterval: 1)
@@ -136,6 +152,16 @@ class ScheduleWait {
         queue.async {
             print("[ScheduleWait] waiting complete.", terminator: " ")
             if (Control.main.state == .Waiting) {
+                
+                // notify user that the recording is starting
+                let content = UNMutableNotificationContent()
+                content.title = "Recording Started for \(meeting.course)"
+                content.body = "The recording has started for this course."
+                let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
+                UNUserNotificationCenter.current().add(request) { (error) in
+                   if error != nil { print("ERROR with notification alert: \(error!)") }
+                }
+                
                 print("Requesting to start recording...")
                 DispatchQueue.main.async {
                     Control.main.AttemptUpdateState(requested: .Record)

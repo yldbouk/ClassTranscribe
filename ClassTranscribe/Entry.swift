@@ -27,7 +27,7 @@ class Entry : WhisperDelegate {
     static var latest: Entry!
     
     var microphone: Microphone!
-    var destination: String!
+    var forMeeting: Schedule.Meeting?
     var whisper: Whisper!
     var menuLabel: MenuBarLabel!
 
@@ -35,11 +35,11 @@ class Entry : WhisperDelegate {
     
     
 
-    init(destination: String?, menuLabel: MenuBarLabel) { // recording
+    init(destination: Schedule.Meeting?, menuLabel: MenuBarLabel) { // recording
         Entry.latest = self
         print("init microphone")
         microphone = Microphone(entry: self)
-        self.destination = destination
+        forMeeting = destination
         self.menuLabel = menuLabel
 
         do { try microphone.record() }
@@ -49,9 +49,9 @@ class Entry : WhisperDelegate {
         }
     }
     
-    init(destination: String?, withExistingRecording: URL, menuLabel: MenuBarLabel) { // only transcription
+    init(destination: Schedule.Meeting?, withExistingRecording: URL, menuLabel: MenuBarLabel) { // only transcription
         Entry.latest = self
-        self.destination = destination
+        self.forMeeting = destination
         self.menuLabel = menuLabel
 
         
@@ -60,7 +60,7 @@ class Entry : WhisperDelegate {
         
     public func stopRecording() {
         print("Stopping Recording")
-        microphone?.stop()
+        microphone.stop()
     }
     
     public func stopTranscription()  {
@@ -78,7 +78,7 @@ class Entry : WhisperDelegate {
         let appsupport = FileManager.default.urls(for:.applicationSupportDirectory, in: .userDomainMask).first
         let model: URL = appsupport!.appending(path: "ClassTranscribe/model.bin")
         
-        await MainActor.run { menuLabel.update(to: .Transcribe) }
+        DispatchQueue.main.sync { self.menuLabel.update(to: .Transcribe, forOperation: forMeeting?.course) }
         let whisper = Whisper(fromFileURL: model)
         whisper.delegate = self
         whisper.params.language = .english
@@ -89,7 +89,7 @@ class Entry : WhisperDelegate {
         let appsupport = FileManager.default.urls(for:.applicationSupportDirectory, in: .userDomainMask).first
         let model: URL = appsupport!.appending(path: "ClassTranscribe/model.bin")
         
-        await MainActor.run { menuLabel.update(to: .Transcribe) }
+        DispatchQueue.main.sync { menuLabel.update(to: .Transcribe, forOperation: forMeeting?.course) }
         let whisper = Whisper(fromFileURL: model)
         whisper.delegate = self
         whisper.params.language = .english
@@ -112,7 +112,7 @@ class Entry : WhisperDelegate {
     // Progress updates as a percentage from 0-1
     func whisper(_ aWhisper: Whisper, didUpdateProgress progress: Double) {
         if(Control.main.state == .Transcribe) {
-             menuLabel.update(to: .Transcribe, percentage: String(format: "%.0f%%", progress*100))
+            menuLabel.update(to: .Transcribe, percentage: String(format: "%.0f%%", progress*100), forOperation: forMeeting?.course)
         }
     }
 
@@ -122,7 +122,8 @@ class Entry : WhisperDelegate {
     // Finished transcribing, includes all transcribed segments of text
     func whisper(_ aWhisper: Whisper, didCompleteWithSegments segments: [Segment]) {
         print("\n\nTranscription Complete")
-        menuLabel.update(to: .Transcribe, percentage: "100%")
+        menuLabel.update(to: .Transcribe, percentage: "100%", forOperation: forMeeting?.course)
+        
         
 
     var resData:String = "WEBVTT"
@@ -132,21 +133,8 @@ class Entry : WhisperDelegate {
 //            print(formatSeconds(timems: segment.startTime), "-->", formatSeconds(timems: segment.endTime))
 //            print(segment.text)
         }
-        
-        var destinationURL: URL!
-        if(destination == nil) {
-            let panel = NSSavePanel()
-            panel.canCreateDirectories = true
-            
-            // TODO: user must save the file (for now)
-            while true { if (panel.runModal() == .OK) { break } }
-            destinationURL = panel.url!
-        } else {
-            // TODO: Implement auto-saving to location
-//            destinationURL =
-        }
         do {
-            try resData.write(to: destinationURL, atomically: false, encoding: .utf8)
+            try resData.write(to: determineDestination(), atomically: false, encoding: .utf8)
         } catch {
             print("ERROR writing file: ", error)
         }
@@ -158,4 +146,18 @@ class Entry : WhisperDelegate {
         print("\n\nERROR:", error)
     }
 
+    func determineDestination() -> URL {
+//        if(forMeeting == nil) {
+            let panel = NSSavePanel()
+            panel.canCreateDirectories = true
+            
+            // TODO: user must save the file (for now)
+            while true { if (panel.runModal() == .OK) { break } }
+            return panel.url!
+//        } else {
+            // TODO: Implement auto-saving to location
+//            destinationURL =
+//        }
+    }
+    
 }
