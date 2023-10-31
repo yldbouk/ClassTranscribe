@@ -93,7 +93,13 @@ class MenuBarLabel: ObservableObject {
         case .Transcribe:
             labels.icon.image = "recordingtape.circle.fill"
             labels.icon.text = percentage 
-            labels.status = "Transcribing\(forOperation ?? ""), \(percentage) complete"
+            if(percentage.starts(with: ".")) {
+                labels.status = "Transcribing\(forOperation!), preparing"
+            } else if(percentage.starts(with: "100")) {
+                labels.status = "Transcribing\(forOperation!), finalizing"
+            } else {
+                labels.status = "Transcribing\(forOperation!), \(percentage) complete"
+            }
             labels.transcription = "Stop Transcribing"
         break
         
