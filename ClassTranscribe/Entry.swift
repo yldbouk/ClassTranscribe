@@ -124,6 +124,7 @@ class Entry : WhisperDelegate {
         print("\n\nTranscription Complete")
         menuLabel.update(to: .Transcribe, percentage: "100%", forOperation: forMeeting?.course)
         
+        
 
     var resData:String = "WEBVTT"
         segments.forEach { segment in
@@ -145,4 +146,18 @@ class Entry : WhisperDelegate {
         print("\n\nERROR:", error)
     }
 
+    func determineDestination() -> URL {
+//        if(forMeeting == nil) {
+            let panel = NSSavePanel()
+            panel.canCreateDirectories = true
+            
+            // TODO: user must save the file (for now)
+            while true { if (panel.runModal() == .OK) { break } }
+            return panel.url!
+//        } else {
+            // TODO: Implement auto-saving to location
+//            destinationURL =
+//        }
+    }
+    
 }
