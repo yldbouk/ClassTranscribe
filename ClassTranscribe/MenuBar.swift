@@ -107,7 +107,7 @@ class MenuBarLabel: ObservableObject {
         
         
         case .Waiting:
-            labels.icon.image = "timer"
+            labels.icon.image = "graduationcap.fill"
             labels.icon.text = percentage
             labels.status = "Waiting\(forOperation!), \(percentage) remaining"
             labels.recording = "Begin Recording"
