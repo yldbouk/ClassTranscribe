@@ -49,12 +49,12 @@ class Schedule {
         
         let now = Date.now
         var nextMeeting: Meeting!
-        var timeTillMeeting = 0.0 // should this be 0?
+        var timeTillMeeting = Double.infinity
         
         for meeting in today {
             let date = Calendar.current.date(bySettingHour: meeting.startsAt.hour, minute: meeting.startsAt.minute, second: 0, of: now)!
             let interval = date.timeIntervalSince(now)
-            if interval > timeTillMeeting {
+            if interval < timeTillMeeting {
                 nextMeeting = meeting
                 timeTillMeeting = interval
             }
