@@ -18,11 +18,9 @@ class ScheduleWait {
     }
     
     func updateMenuIcon(_ text: String) {
-        print("[ScheduleWait] Updating menu icon to \(text)")
+//        print("[ScheduleWait] Updating menu icon to \(text)")
         DispatchQueue.main.async {
             self.menuLabel.update(to: .Waiting, percentage: text, forOperation: self.meetingName)
-//            self.menuLabel.labels.icon.text = text
-//            self.menuLabel.labels.status = "Waiting For Class... \(text) remain"
         }
     }
     
@@ -30,16 +28,21 @@ class ScheduleWait {
     
     func ScheduleRecording(meeting: Schedule.Meeting) {
         meetingName = meeting.course
+        
+        // DEBUG OVERRIDE
+//        var meeting = meeting
+//        let d = DateFormatter()
+//        d.dateFormat = "yyyy-MM-dd HH:mm"
+//        meeting.startsAt.relativeSeconds = d.date(from: "2023-11-08 14:37")!.timeIntervalSince(Date.now)
+        
+        var currentDate = Date.now
         var seconds = Int(meeting.startsAt.relativeSeconds!)
-        
-//        var currentTime =
-//        var seconds = Int(target! - Date.now.timeIntervalSince1970)
-        
         var alignSeconds: Int = 0
-        let alignMilliseconds = meeting.startsAt.relativeSeconds!.truncatingRemainder(dividingBy: 1)
+        let alignSubSecond = meeting.startsAt.relativeSeconds!.truncatingRemainder(dividingBy: 1)
+        var hr = seconds / 3600
         
-        var hr = (seconds) / 3600
-        
+        print("[ScheduleWait] Waiting till \(meeting.startsAt), which is in \(seconds) seconds.")
+
         var loopDays = 0
         var loopAlignDay = 0
         var loopHours = 0
@@ -47,7 +50,7 @@ class ScheduleWait {
         var loopSeconds = 900
         
         if(hr > 24) { alignSeconds = seconds % 86400 }
-        else if (hr > 1) { alignSeconds = seconds % 3600 }
+        else if (hr > 0) { alignSeconds = seconds % 3600 }
         else if(seconds > 900) { alignSeconds = seconds % 60 }
         
         seconds -= alignSeconds
@@ -58,7 +61,7 @@ class ScheduleWait {
         if(hr >= 24) { label = String(ceil(Double(seconds) / 86400.0)) + (hr > 48 ? " days" : " day") }
         else if (hr > 12) { label = "1 day" }
         else if (hr >= 1) { label = String(hr) + (hr != 1 ? " hrs" : " hr") }
-        else if (seconds > 900) { label = String(ceil(Double(seconds) / 60.0)) + " mins" }
+        else if (seconds > 900) { label = String(seconds / 60 + 1) + " mins" }
         else { label = String(format: "%d:%02d", seconds / 60, seconds % 60) }
 
         if(hr > 24) {
@@ -84,84 +87,64 @@ class ScheduleWait {
         updateMenuIcon(label)
         
         if(alignSeconds != 0) {
-            queue.async {
-//                currentTime += alignSeconds
-                print("[ScheduleWait] waiting \(alignSeconds) seconds")
-                Thread.sleep(forTimeInterval: Double(alignSeconds) - (1-alignMilliseconds))
-            }
+            print("[ScheduleWait] aligning by waiting \(alignSeconds) seconds")
+            currentDate.addTimeInterval(Double(alignSeconds) + alignSubSecond)
         }
         if(loopDays != 0) {
-            queue.async {
-                print("[SheduleWait] waiting \(loopDays) days ")
-                while loopDays > 0 {
-                    Thread.sleep(forTimeInterval: 86400)
-//                    currentTime += 86400
+            print("[ScheduleWait] waiting \(loopDays) days starting at \(currentDate.description(with: .current))")
+                let timer = Timer(fire: currentDate, interval: 86400, repeats: true) {timer in
                     self.updateMenuIcon("\(loopDays) \(loopDays == 1 ? "day" : "days")")
                     loopDays -= 1
-                }
+                    if(loopDays < 1) { timer.invalidate() }
+//                }
             }
+            currentDate.addTimeInterval(Double(loopDays) * 86400)
+            RunLoop.current.add(timer, forMode: .common)
         }
         if(loopAlignDay != 0) {
-            queue.async {
-                print("[ScheduleWait] aligning by waiting \(loopAlignDay) hours")
-//                currentTime += loopAlignDay * 3600
-                Thread.sleep(forTimeInterval: Double(loopAlignDay*3600))
-                // no need for updating the icon
-            }
+            print("[ScheduleWait] aligning by waiting \(loopAlignDay) hours")
+            currentDate.addTimeInterval(Double(loopAlignDay * 3600))
         }
         if(loopHours != 0) {
-            queue.async {
-                print("[ScheduleWait] waiting \(loopHours) hours")
-                while loopHours > 0 {
-//                    currentTime += 3600
-                    Thread.sleep(forTimeInterval: 3600)
+            print("[ScheduleWait] waiting \(loopHours) hours starting at \(currentDate.description(with: .current))")
+            let timer = Timer(fire: currentDate, interval: 3600, repeats: true) { timer in
                     self.updateMenuIcon("\(loopHours) hours")
-                    loopHours -= 1
+                loopHours -= 1
+                if loopHours < 1 { timer.invalidate() }
                 }
-            }
+            currentDate.addTimeInterval(Double(loopHours) * 3600)
+            RunLoop.current.add(timer, forMode: .common)
         }
         if (loopMinutes != 0) {
-            queue.async {
-                print("[ScheduleWait] waiting \(loopMinutes) minutes")
-                while loopMinutes > 0 {
-//                    currentTime += 60
-                    Thread.sleep(forTimeInterval: 60)
-                    self.updateMenuIcon("\(14+loopMinutes) mins")
-                    loopMinutes -= 1
-                }
+            print("[ScheduleWait] waiting \(loopMinutes) minutes starting at \(currentDate.description(with: .current))")
+            let timer = Timer(fire: currentDate, interval: 60, repeats: true) { timer in
+                self.updateMenuIcon("\(15+loopMinutes) mins")
+                loopMinutes -= 1
+                if loopMinutes < 1 { timer.invalidate() }
             }
+            currentDate.addTimeInterval(Double(loopMinutes) * 60)
+
+//            }
+            RunLoop.current.add(timer, forMode: .common)
         }
-        queue.async {
-            
+        RunLoop.current.schedule(after: .init(currentDate)) {
             // notify user
-            let content = UNMutableNotificationContent()
-            content.title = "\(meeting.course) Meeting Soon"
-            content.body = "Your course is meeting soon."
-            let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
-            UNUserNotificationCenter.current().add(request) { (error) in
-               if error != nil { print("ERROR with notification warn: \(error!)") }
-            }
-            
-            print("[ScheduleWait] waiting \(seconds) seconds")
-            while loopSeconds+1 > 0 {
-                Thread.sleep(forTimeInterval: 1)
+            print("[ScheduleWait] waiting \(loopSeconds) seconds")
+            loopSeconds -= 1 // TODO: check why it's off by 1
+            let timer = Timer(timeInterval: 1, repeats: true){timer in
                 self.updateMenuIcon(String(format: "%d:%02d", loopSeconds / 60, loopSeconds % 60))
-                loopSeconds -= 1
-            }
-        }
-        queue.async {
-            print("[ScheduleWait] waiting complete.", terminator: " ")
-            if (Control.main.state == .Waiting) {
-                
-                // notify user that the recording is starting
-                let content = UNMutableNotificationContent()
-                content.title = "Recording Started for \(meeting.course)"
-                content.body = "The recording has started for this course."
-                let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
-                UNUserNotificationCenter.current().add(request) { (error) in
-                   if error != nil { print("ERROR with notification alert: \(error!)") }
+                loopSeconds-=1
+                if loopSeconds <= 0 {
+                    print("[ScheduleWait] wait complete")
+                    timer.invalidate()
                 }
-                
+            }
+            RunLoop.main.add(timer, forMode: .common)
+        }
+        currentDate.addTimeInterval(Double(loopSeconds))
+        print("[ScheduleWait] Will start recording at \(currentDate.description(with: .current))")
+        RunLoop.current.schedule(after: .init(currentDate))  {
+            if (Control.main.state == .Waiting) {
                 print("Requesting to start recording...")
                 DispatchQueue.main.async {
                     Control.main.AttemptUpdateState(requested: .Record)
