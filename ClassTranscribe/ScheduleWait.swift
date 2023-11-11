@@ -127,8 +127,7 @@ class ScheduleWait {
 //            }
             RunLoop.current.add(timer, forMode: .common)
         }
-        RunLoop.current.schedule(after: .init(currentDate)) {
-            // notify user
+            AppDelegate.sendRecordingAutoStartNotification(meeting: meeting.course)
             print("[ScheduleWait] waiting \(loopSeconds) seconds")
             loopSeconds -= 1 // TODO: check why it's off by 1
             let timer = Timer(timeInterval: 1, repeats: true){timer in

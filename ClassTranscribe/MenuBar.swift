@@ -119,6 +119,8 @@ class MenuBarLabel: ObservableObject {
 
 @main
 struct MenuBar: App {
+    @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    
     @ObservedObject private var menuLabel = MenuBarLabel()
     var controller: Control?
     
