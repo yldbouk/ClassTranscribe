@@ -40,8 +40,7 @@ class Control {
             currentState = .Waiting
             nextClass = schedule.nextMeeting()
             menuLabel.update(to: .Waiting, forOperation: nextClass!.course)
-            waiter = ScheduleWait(menuLabel: menuBar)
-            waiter.ScheduleRecording(meeting: nextClass!)
+            waiter = ScheduleWait(nextClass!)
         } else { menuLabel.update(to: .Idle) }
     }
     
@@ -55,7 +54,7 @@ class Control {
             currentState = .Waiting
             nextClass = schedule.nextMeeting()
             menuLabel.update(to: .Waiting, forOperation: nextClass?.course)
-            waiter.ScheduleRecording(meeting: nextClass!)
+            waiter.ScheduleRecording(nextClass!)
         }
     }
         
@@ -63,6 +62,7 @@ class Control {
         if(requested == .Record) {
             if(currentState == .Idle || currentState == .Waiting) { // Begin Recording
                 print("Starting Recording...")
+                ScheduleWait.main.cancelScheduledRecording()
                 currentState = requested
                 menuLabel.update(to: .Record)
                 entries.append(Entry(destination: nextClass, menuLabel: menuLabel))

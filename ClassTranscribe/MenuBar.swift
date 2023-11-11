@@ -12,6 +12,12 @@ class MenuBarLabel: ObservableObject {
     var waitingTimer: Timer?
     var startTime: Date!
     private let formatter = DateFormatter()
+    private static var _self: MenuBarLabel!
+    public static var main: MenuBarLabel {
+        get { return _self }
+    }
+    
+    init () { MenuBarLabel._self = self }
     
     public func manageTimer(stop: Bool = false) {
         guard !stop else {
