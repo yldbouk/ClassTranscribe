@@ -12,7 +12,7 @@ class ScheduleWait {
     let menuLabel = MenuBarLabel.main
     var meeting: Schedule.Meeting
     var queue: [Timer] = []
-    var notified = false
+    var recordingWillStartNotificationID: String?
     private static var _self: ScheduleWait?
     public static var main: ScheduleWait {
         get { return _self! }
@@ -148,9 +148,8 @@ class ScheduleWait {
             currentDate.addTimeInterval(Double(loopMinutes) * 60)
         }
         queue.append(Timer(fire: currentDate, interval: 0, repeats: false) { timer in
-            if !self.notified {
-                AppDelegate.sendRecordingAutoStartNotification(meeting: meeting.course)
-                self.notified = true
+            if self.recordingWillStartNotificationID == nil {
+                self.recordingWillStartNotificationID = AppDelegate.sendRecordingAutoStartNotification(meeting: meeting.course)
             }
             print("[ScheduleWait] waiting \(loopSeconds) seconds")
             loopSeconds -= 1 // TODO: check why it's off by 1
@@ -171,10 +170,10 @@ class ScheduleWait {
         queue.append(Timer(fire: currentDate, interval: 0, repeats: false) { timer in
             DispatchQueue.main.async { self.queue.removeAll() }
             if (Control.main.state == .Waiting) {
-                AppDelegate.sendRecordingAutoStartNotification(true, meeting: meeting.course)
-                print("Requesting to start recording...")
+                let recordingStartedNotificationID = AppDelegate.sendRecordingAutoStartNotification(true, meeting: meeting.course, oldID: self.recordingWillStartNotificationID)
+                print("[ScheduleWait] Requesting to start recording...")
                 DispatchQueue.main.async {
-                    Control.main.AttemptUpdateState(requested: .Record)
+                    Control.main.AttemptUpdateState(requested: .Record, notificationID: recordingStartedNotificationID)
                 }
             }
             print()

@@ -30,18 +30,21 @@ class Entry : WhisperDelegate {
     var forMeeting: Schedule.Meeting?
     var whisper: Whisper!
     var menuLabel: MenuBarLabel!
+    var recordingStartedNotificationID: String?
 
     public let id = UUID().hashValue
     
     
+    /// Create an entry by recording then transcribing
+    init(destination: Schedule.Meeting?, menuLabel: MenuBarLabel, recordingStartedNotificationID: String?) {
 
-    init(destination: Schedule.Meeting?, menuLabel: MenuBarLabel) { // recording
         Entry.latest = self
         print("init microphone")
         microphone = Microphone(entry: self)
         forMeeting = destination
         self.menuLabel = menuLabel
-
+        self.recordingStartedNotificationID = recordingStartedNotificationID
+        
         do { try microphone.record() }
         catch {
             print(error)
@@ -60,6 +63,9 @@ class Entry : WhisperDelegate {
         
     public func stopRecording() {
         print("Stopping Recording")
+        if recordingStartedNotificationID != nil {
+            AppDelegate.removeNotification(recordingStartedNotificationID!)
+        }
         microphone.stop()
     }
     

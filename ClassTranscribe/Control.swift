@@ -59,13 +59,18 @@ class Control {
     }
         
     func AttemptUpdateState(requested: AppState) {
+    func AttemptUpdateState(requested: AppState, notificationID:String? = nil) {
         if(requested == .Record) {
             if(currentState == .Idle || currentState == .Waiting) { // Begin Recording
                 print("Starting Recording...")
                 ScheduleWait.main.cancelScheduledRecording()
                 currentState = requested
                 menuLabel.update(to: .Record)
-                entries.append(Entry(destination: nextClass, menuLabel: menuLabel))
+                entries.append(Entry(
+                    destination: nextClass,
+                    menuLabel: menuLabel,
+                    recordingStartedNotificationID: notificationID
+                ))
                 menuLabel.manageTimer()
                 
             } else if(currentState == .Record) {

@@ -22,7 +22,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
     
-    static func sendRecordingAutoStartNotification(_ ofStarting: Bool = false, meeting: String) {
+    static func removeNotification(_ id: String) {
+        UNUserNotificationCenter.current().removeDeliveredNotifications(withIdentifiers: [id])
+    }
+    
+    static func sendRecordingAutoStartNotification(_ ofStarting: Bool = false, meeting: String, oldID: String? = nil) -> String {
+        if oldID != nil { removeNotification(oldID!) }
         let content = UNMutableNotificationContent()
         if ofStarting {
             content.title = "Recording Started for \(meeting)"
@@ -32,7 +37,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             content.body = "Your course is meeting soon."
         }
         print("Notifying user: \(content.title)")
-        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
+        let identifier = UUID().uuidString
+        let request = UNNotificationRequest(identifier: identifier, content: content, trigger: nil)
         UNUserNotificationCenter.current().add(request)
+        return identifier
     }
 }
