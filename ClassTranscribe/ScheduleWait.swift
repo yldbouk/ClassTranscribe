@@ -9,10 +9,10 @@ import Foundation
 import UserNotifications
 
 class ScheduleWait {
-    let menuLabel = MenuBarLabel.main
     var meeting: Schedule.Meeting
     var queue: [Timer] = []
     var recordingWillStartNotificationID: String?
+    var overrideDisplayPriority = false
     private static var _self: ScheduleWait?
     public static var main: ScheduleWait {
         get { return _self! }
@@ -26,9 +26,10 @@ class ScheduleWait {
     }
     
     func updateMenuIcon(_ text: String) {
-//        print("[ScheduleWait] Updating menu icon to \(text)")
+        print("[ScheduleWait] \(text) remains.")
+//        guard Control.main.trackedEntry == nil else {return}
         DispatchQueue.main.async {
-            self.menuLabel.update(to: .Waiting, percentage: text, forOperation: self.meeting.course)
+            MenuBarLabel.main.update(to: .Waiting, percentage: text, forOperation: self.meeting.course)
         }
     }
     
@@ -38,7 +39,6 @@ class ScheduleWait {
             queue.removeAll()
         }
     }
-    
     
     func rescheduleRecording(){
         guard queue.count > 0 else { return } // not waiting for anything
@@ -58,10 +58,19 @@ class ScheduleWait {
         var currentDate = Date.now
         var relativeInterval = meeting.startsAt.absoluteDate!.timeIntervalSince(currentDate)
         
+        guard relativeInterval > 0 else {
+            print("Scheduled recording time has already passed! Starting recording...")
+            let recordingStartedNotificationID = AppDelegate.sendRecordingAutoStartNotification(true, meeting: meeting.course, oldID: self.recordingWillStartNotificationID)
+            DispatchQueue.main.async {
+                Control.main.AttemptUpdateState(requested: .Record, notificationID: recordingStartedNotificationID)
+            }
+            return
+        }
+        
         // DEBUG OVERRIDE
-        let d = DateFormatter()
-        d.dateFormat = "yyyy-MM-dd HH:mm"
-        relativeInterval = d.date(from: "2023-11-11 11:00")!.timeIntervalSince(currentDate)
+//        let d = DateFormatter()
+//        d.dateFormat = "yyyy-MM-dd HH:mm"
+//        relativeInterval = d.date(from: "2023-11-12 22:20")!.timeIntervalSince(currentDate)
         
         var seconds = Int(relativeInterval)
         var alignSeconds: Int = 0
@@ -148,6 +157,8 @@ class ScheduleWait {
             currentDate.addTimeInterval(Double(loopMinutes) * 60)
         }
         queue.append(Timer(fire: currentDate, interval: 0, repeats: false) { timer in
+            self.overrideDisplayPriority = true
+            Control.main.determineTrackedEntry()
             if self.recordingWillStartNotificationID == nil {
                 self.recordingWillStartNotificationID = AppDelegate.sendRecordingAutoStartNotification(meeting: meeting.course)
             }
@@ -169,8 +180,9 @@ class ScheduleWait {
         print("[ScheduleWait] Will start recording at \(currentDate.description(with: .current))")
         queue.append(Timer(fire: currentDate, interval: 0, repeats: false) { timer in
             DispatchQueue.main.async { self.queue.removeAll() }
-            if (Control.main.state == .Waiting) {
+            if (Entry.recording == nil) {
                 let recordingStartedNotificationID = AppDelegate.sendRecordingAutoStartNotification(true, meeting: meeting.course, oldID: self.recordingWillStartNotificationID)
+                self.overrideDisplayPriority = false
                 print("[ScheduleWait] Requesting to start recording...")
                 DispatchQueue.main.async {
                     Control.main.AttemptUpdateState(requested: .Record, notificationID: recordingStartedNotificationID)

@@ -45,6 +45,7 @@ class MenuBarLabel: ObservableObject {
             image: "waveform"
             )
     )
+    @Published var recordingEnabled = false
     
     func formatRelativeTime(seconds: Int) -> String {
         let sec = seconds % 60
@@ -71,34 +72,41 @@ class MenuBarLabel: ObservableObject {
         
     }
     
-    func update(to: Control.AppState, percentage: String = "...", forOperation: String? = nil) {
+    func update(to: Control.AppState, percentage: String = "...", forOperation: String? = nil, fromEntry: Entry? = nil) {
+        guard fromEntry == Control.main.trackedEntry else {
+            print("Would have updated MenuBar Label to \(to), \(percentage), from \(String(describing: fromEntry?.id))")
+            return
+        }
         var forOperation = forOperation
-        if forOperation != nil { forOperation = " for \(forOperation!)" }
-        print("Updating MenuBar Label to \(to), \(percentage)")
+        if forOperation == nil { forOperation = "" }
+        else { forOperation = " for \(forOperation!)" }
+        print("Updating MenuBar Label to \(to), \(percentage), from \(String(describing: fromEntry?.id))")
         switch (to) {
         case .Idle:
             labels.icon.image = "waveform"
             labels.icon.text = "Idle"
             labels.status = "Idle"
-            labels.recording = "Begin Recording"
             labels.transcription = "Transcribe Existing Recording..."
+            if recordingEnabled {
+                labels.recording = "Begin Recording"
+            } else {
+                labels.recording = "Microphone Disabled"
+            }
         break
         
         
         case .Record:
             labels.icon.image = "record.circle"
             labels.icon.text = "0:00"
-            labels.status = "Recording\(forOperation ?? "") 0:00 elapsed"
+            labels.status = "Recording\(forOperation!) 0:00 elapsed"
             labels.recording = "End Recording"
         break
-       
-        
-        case .RecordingComplete: break
-        
         
         case .Transcribe:
             labels.icon.image = "recordingtape.circle.fill"
             labels.icon.text = percentage 
+            
+            labels.recording = "Begin Recording"
             if(percentage.starts(with: ".")) {
                 labels.status = "Transcribing\(forOperation!), preparing"
             } else if(percentage.starts(with: "100")) {
@@ -106,11 +114,8 @@ class MenuBarLabel: ObservableObject {
             } else {
                 labels.status = "Transcribing\(forOperation!), \(percentage) complete"
             }
-            labels.transcription = "Stop Transcribing"
+//            labels.transcription = "Stop Transcribing"
         break
-        
-        case .TranscribingComplete: break
-        
         
         case .Waiting:
             labels.icon.image = "graduationcap.fill"
@@ -143,6 +148,7 @@ struct MenuBar: App {
             
             Button(menuLabel.labels.recording) { controller!.AttemptUpdateState(requested: .Record) } // TODO: Implement recording properly
                 .keyboardShortcut("R")
+                .disabled(!menuLabel.recordingEnabled)
             Button(menuLabel.labels.transcription) {controller!.AttemptUpdateState(requested: .Transcribe) }
                 .keyboardShortcut("E")
             

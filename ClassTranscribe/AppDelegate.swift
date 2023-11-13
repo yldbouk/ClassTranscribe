@@ -14,7 +14,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         NSWorkspace.shared.notificationCenter.addObserver(forName: NSWorkspace.didWakeNotification, object: nil, queue: .main){ notification in
             ScheduleWait.main.rescheduleRecording()
         }
-        
+    
+        Microphone.getPermission()
+            
         UNUserNotificationCenter.current().requestAuthorization() { granted, error in
             if (!granted) {
                 print("User did not grant notification permisison: \(error!)")
