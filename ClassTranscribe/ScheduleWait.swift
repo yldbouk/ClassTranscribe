@@ -9,27 +9,17 @@ import Foundation
 import UserNotifications
 
 class ScheduleWait {
-    var meeting: Schedule.Meeting
+    var meeting: Schedule.Meeting?
     var queue: [Timer] = []
     var recordingWillStartNotificationID: String?
     var overrideDisplayPriority = false
-    static var _self: ScheduleWait?
-    public static var main: ScheduleWait? {
-        get { return _self }
-    }
-    
-    init(_ meeting: Schedule.Meeting) {
-        self.meeting = meeting
-        Self._self = self
-        ScheduleRecording(meeting)
-        
-    }
+    static let main: ScheduleWait = .init()
     
     func updateMenuIcon(_ text: String) {
         print("[ScheduleWait] \(text) remain.")
 //        guard Control.main.trackedEntry == nil else {return}
         DispatchQueue.main.async {
-            MenuBarLabel.main.update(to: .Waiting, percentage: text, forOperation: self.meeting.title)
+            MenuBarLabel.main.update(to: .Waiting, percentage: text, forOperation: self.meeting?.title)
         }
     }
     
@@ -41,20 +31,34 @@ class ScheduleWait {
     }
     
     func rescheduleRecording(){
-        guard queue.count > 0 else { return } // not waiting for anything
+        guard meeting != nil else { return } // not waiting for anything
         print("[ScheduleWait] Rescheduling Timers for next meeting")
         DispatchQueue.main.async { [self] in
             for timer in queue { timer.invalidate() }
             queue.removeAll()
-            if Date.now.timeIntervalSince(meeting.startTime.absoluteDate!) > 0 {
+            if Date.now.timeIntervalSince(meeting!.startTime.absoluteDate!) > 0 {
                 // TODO: Add a (maybe 5 min) window where the meeting still starts
                 meeting = Schedule.main.nextMeeting()
             }
-            ScheduleRecording(meeting)
+            ScheduleRecording(meeting!)
+        }
+    }
+    func scheduleChanged() {
+        print("Schedule changed, adjusting waiting accordingly...")
+        cancelScheduledRecording()
+        guard Schedule.main.enabledByUser && !Schedule.main.isEmpty else {
+            MenuBarLabel.main.update(to: .Idle)
+            return
+        }
+        DispatchQueue.main.async {
+            self.ScheduleRecording(Schedule.main.nextMeeting())
+            Control.main.determineTrackedEntry()
         }
     }
     
+    
     func ScheduleRecording(_ meeting: Schedule.Meeting) {
+        self.meeting = meeting
         var currentDate = Date.now
         var relativeInterval = meeting.startTime.absoluteDate!.timeIntervalSince(currentDate)
         
@@ -179,6 +183,7 @@ class ScheduleWait {
         currentDate.addTimeInterval(Double(loopSeconds))
         print("[ScheduleWait] Will start recording at \(currentDate.description(with: .current))")
         queue.append(Timer(fire: currentDate, interval: 0, repeats: false) { timer in
+            self.meeting = nil
             DispatchQueue.main.async { self.queue.removeAll() }
             if (Entry.recording == nil) {
                 let recordingStartedNotificationID = AppDelegate.sendRecordingAutoStartNotification(true, meeting: meeting.title, oldID: self.recordingWillStartNotificationID)

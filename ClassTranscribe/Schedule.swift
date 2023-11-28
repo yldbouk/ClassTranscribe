@@ -16,8 +16,8 @@ class Schedule: ObservableObject {
         let id = UUID()
         var popover: Bool = false
         var startDate: Date {
-            get { dateFrom(startTime) }
-            set { startTime = timeFrom(newValue) }
+            get { Schedule.dateFrom(startTime) }
+            set { startTime = Schedule.timeFrom(newValue) }
         }
         var startTimeInMinutes: Int {
                 get {(startTime.hour * 60) + startTime.minute}
@@ -84,8 +84,20 @@ class Schedule: ObservableObject {
     
     private static var _main: Schedule!
     
-    var enabled = UserDefaults.standard.bool(forKey: "scheduleEnabled") {
-        didSet { UserDefaults.standard.set(enabled, forKey: "scheduleEnabled") }
+    @Published var enabledByUser = UserDefaults.standard.bool(forKey: "scheduleEnabled") {
+        didSet { UserDefaults.standard.set(enabledByUser, forKey: "scheduleEnabled") }
+    }
+    
+    static func dateFrom(_ time: Schedule.Time) -> Date {
+        let dateComponents = DateComponents(year: 0, month: 0, day: 0, hour: time.hour, minute: time.minute)
+        return Calendar.current.date(from: dateComponents) ?? .now
+    }
+    
+    static func timeFrom(_ date: Date) -> Schedule.Time {
+        let c = Calendar.current
+        let h = c.component(.hour, from: date)
+        let m = c.component(.minute, from: date)
+        return Schedule.Time(h, m)
     }
     
     // TODO: Replace (all occurences) with static let main: Schedule = .init()
@@ -112,9 +124,10 @@ class Schedule: ObservableObject {
     
     
     init() {
-        enabled = !schedule.joined().isEmpty
         Self._main = self
     }
+    
+    var isEmpty: Bool { UserDefaults.standard.data(forKey: "schedule")?.count ?? 22 < 23 }
     
     public func nextMeeting() -> Meeting {
         var res: Meeting!

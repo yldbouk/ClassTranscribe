@@ -22,7 +22,6 @@ class Control {
     var menuLabel: MenuBarLabel!
     var schedule: Schedule!
     var nextClass: Schedule.Meeting?
-    var waiter: ScheduleWait!
     var trackedEntry: Entry?
 
     
@@ -43,10 +42,10 @@ class Control {
             print("Schedule enabled, scheduling...")
             menuLabel.recordingEnabled = true
             schedule = Schedule()
-            if (schedule.enabled) {
+            if (schedule.enabledByUser && !schedule.isEmpty) {
                 nextClass = schedule.nextMeeting()
                 menuLabel.update(to: .Waiting, forOperation: nextClass!.title)
-                waiter = ScheduleWait(nextClass!)
+                ScheduleWait.main.ScheduleRecording(nextClass!)
             }
         }
     }
@@ -57,10 +56,10 @@ class Control {
         if(schedule == nil) {
             if trackedEntry == nil { menuLabel.update(to: .Idle) }
         } else {
-            guard waiter.queue.isEmpty else { return }
+            guard ScheduleWait.main.queue.isEmpty else { return }
             nextClass = schedule.nextMeeting()
 //            menuLabel.update(to: .Waiting, forOperation: nextClass?.course)
-            waiter.ScheduleRecording(nextClass!)
+            ScheduleWait.main.ScheduleRecording(nextClass!)
         }
     }
     
@@ -82,7 +81,7 @@ class Control {
 //            let label = entry!.selfLabel
 //            menuLabel.update(to: label.to, percentage: label.percentage, forOperation: label.forOperation, fromEntry: entry)
             trackedEntry = entry
-        } else if ScheduleWait.main!.overrideDisplayPriority {
+        } else if ScheduleWait.main.overrideDisplayPriority {
             print("Accepting MenuBar updates from Timers: ScheduleWait Display Override is on.")
             trackedEntry = nil
         } else if entry != nil {

@@ -79,8 +79,15 @@ struct SettingsView: View {
     }
      
     struct ScheduleSettingsView: View {
+        @StateObject var schedule = Schedule.main
         var body: some View {
-            ScheduleView()
+            VStack {
+                Toggle(isOn: $schedule.enabledByUser) {Text("Enabled")}
+                    .onChange(of: schedule.enabledByUser) {
+                        DispatchQueue.main.async { ScheduleWait.main.scheduleChanged() }
+                    }
+                ScheduleView()
+            }
         }
     }
 }

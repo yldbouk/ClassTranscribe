@@ -42,7 +42,7 @@ struct ScheduleView: View {
                             }
                         }
                     }
-                }.onAppear { scroll.scrollTo(8, anchor: .top) } // scroll to 8:00AM
+                }.onAppear { scroll.scrollTo(8, anchor: .top) } // scroll to 8:00AM; TODO: scroll to first event (before 8AM?)
             }
         }
     }
@@ -115,6 +115,7 @@ struct ScheduleView: View {
                                         popover: true
                                     )
                                     schedule.schedule[day].append(event)
+                                    ScheduleWait.main.scheduleChanged()
                                 }
                                 .gesture( // create an event by dragging
                                     DragGesture(minimumDistance: 0)
@@ -137,7 +138,9 @@ struct ScheduleView: View {
                                             schedule.schedule[day][schedule.schedule[day].count - 1].duration = min(max(newDuration, 15), maxDuration)
                                         }
                                         .onEnded { _ in
-                                            guard dragging == true else { return }
+                                            guard dragging else { return }
+                                            ScheduleWait.main.scheduleChanged()
+                                            
                                             schedule.schedule[day][schedule.schedule[day].count - 1].popover = true
                                             
                                             dragging = false
@@ -181,7 +184,7 @@ struct ScheduleView: View {
             
             let daySorted = schedule.schedule[forDay].sorted(by: { $0.startTimeInMinutes < $1.startTimeInMinutes })
             let nextEvent = daySorted.first(where: { $0.startTimeInMinutes > startTime })
-            return (nextEvent?.startTimeInMinutes ?? 1440) - startTime
+            return max(15, (nextEvent?.startTimeInMinutes ?? 1440) - startTime)
             
         }
         
@@ -236,7 +239,11 @@ struct ScheduleView: View {
                 Button("Delete", role: .destructive) { didChange(.remove) }
                 .buttonStyle(.borderless)
                 .foregroundStyle(.red)
-            }.padding(10)
+            }
+            .padding(10)
+            .onDisappear {
+                ScheduleWait.main.scheduleChanged()
+            }
         }
         
         var body: some View {
@@ -302,19 +309,7 @@ struct ScheduleView: View {
         
         let daySorted = schedule.schedule[forDay].sorted(by: { $0.startTimeInMinutes < $1.startTimeInMinutes })
         let nextEvent = daySorted.first(where: { $0.startTimeInMinutes > startTime })
-        return (nextEvent?.startTimeInMinutes ?? 1440) - startTime
+        return max(15,(nextEvent?.startTimeInMinutes ?? 1440) - startTime)
         
-    }
-      
-    
-    func dateFrom(_ time: Schedule.Time) -> Date {
-        let dateComponents = DateComponents(year: 0, month: 0, day: 0, hour: time.hour, minute: time.minute)
-        return Calendar.current.date(from: dateComponents) ?? .now
-    }
-    func timeFrom(_ date: Date) -> Schedule.Time {
-        let c = Calendar.current
-        let h = c.component(.hour, from: date)
-        let m = c.component(.minute, from: date)
-        return Schedule.Time(h, m)
     }
 }
