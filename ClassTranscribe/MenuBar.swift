@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SettingsAccess
 
 class MenuBarLabel: ObservableObject {
     var recordingTimer: Timer?
@@ -131,18 +132,20 @@ class MenuBarLabel: ObservableObject {
 @main
 struct MenuBar: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
-    
     @ObservedObject private var menuLabel = MenuBarLabel()
+    
     var controller: Control?
     
     init() { controller = Control(menuBar: menuLabel) }
 
     var body: some Scene {
+        
         // WindowGroup { ContentView() }
+        Settings { SettingsView() }
         MenuBarExtra() {
             Text(menuLabel.labels.status)
             
-            
+
             Divider()
             
             
@@ -156,9 +159,14 @@ struct MenuBar: App {
             Divider()
             
             
-            Button("Settings...") { NSApplication.shared.terminate(nil) } // TODO: Create settings view
+            SettingsLink {
+                        Text("Settings...")
+                    } preAction: {
+                        // code to run before Settings opens
+                    } postAction: {
+                         NSApp.activate(ignoringOtherApps: true)
+                    }
                 .keyboardShortcut(",")
-                .disabled(true)
             Button("Quit") { NSApplication.shared.terminate(nil) }
                 .keyboardShortcut("q")
         } label: {

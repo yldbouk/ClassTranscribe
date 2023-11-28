@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import AVFoundation
 import SwiftUI
 import SwiftWhisper
 
@@ -41,12 +40,12 @@ class Control {
     
     func microphoneEnabled(){
         DispatchQueue.main.async { [self] in
-            print("User allowed microphone")
+            print("Schedule enabled, scheduling...")
             menuLabel.recordingEnabled = true
             schedule = Schedule()
-            if (schedule != nil) {
+            if (schedule.enabled) {
                 nextClass = schedule.nextMeeting()
-                menuLabel.update(to: .Waiting, forOperation: nextClass!.course)
+                menuLabel.update(to: .Waiting, forOperation: nextClass!.title)
                 waiter = ScheduleWait(nextClass!)
             }
         }
@@ -83,7 +82,7 @@ class Control {
 //            let label = entry!.selfLabel
 //            menuLabel.update(to: label.to, percentage: label.percentage, forOperation: label.forOperation, fromEntry: entry)
             trackedEntry = entry
-        } else if ScheduleWait.main.overrideDisplayPriority {
+        } else if ScheduleWait.main!.overrideDisplayPriority {
             print("Accepting MenuBar updates from Timers: ScheduleWait Display Override is on.")
             trackedEntry = nil
         } else if entry != nil {

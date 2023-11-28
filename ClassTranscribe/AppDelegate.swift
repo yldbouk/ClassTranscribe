@@ -11,8 +11,11 @@ import UserNotifications
 
 class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ aNotification: Notification) {
+        if ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1" {
+            return
+        }
         NSWorkspace.shared.notificationCenter.addObserver(forName: NSWorkspace.didWakeNotification, object: nil, queue: .main){ notification in
-            ScheduleWait.main.rescheduleRecording()
+            if (ScheduleWait.main != nil) { ScheduleWait.main?.rescheduleRecording() }
         }
     
         Microphone.getPermission()
