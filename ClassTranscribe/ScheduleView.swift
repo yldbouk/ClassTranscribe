@@ -305,17 +305,16 @@ struct ScheduleView: View {
         return (nextEvent?.startTimeInMinutes ?? 1440) - startTime
         
     }
-        
-        
-}
-
-func dateFrom(_ time: Schedule.Time) -> Date {
-    let dateComponents = DateComponents(year: 0, month: 0, day: 0, hour: time.hour, minute: time.minute)
-    return Calendar.current.date(from: dateComponents) ?? .now
-}
-func timeFrom(_ date: Date) -> Schedule.Time {
-    let c = Calendar.current
-    let h = c.component(.hour, from: date)
-    let m = c.component(.minute, from: date)
-    return Schedule.Time(h, m)
+      
+    
+    func dateFrom(_ time: Schedule.Time) -> Date {
+        let dateComponents = DateComponents(year: 0, month: 0, day: 0, hour: time.hour, minute: time.minute)
+        return Calendar.current.date(from: dateComponents) ?? .now
+    }
+    func timeFrom(_ date: Date) -> Schedule.Time {
+        let c = Calendar.current
+        let h = c.component(.hour, from: date)
+        let m = c.component(.minute, from: date)
+        return Schedule.Time(h, m)
+    }
 }
