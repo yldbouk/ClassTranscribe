@@ -80,6 +80,18 @@ class Schedule: ObservableObject {
             else { return lhs.minute < rhs.minute}
         }
         
+        func relative(_ minutes: Int) -> Self {
+                var minute = self.minute; var hour = self.hour
+                minute += minutes
+//                print("minutes: \(minutes)")
+//                print("hour: Int(floor(\(minute) / 60)) (\(hour + (minute / 60))")
+//                print("minute: (60 + \(minute) % 60) % 60 (\((60 + minute%60) % 60))")
+//                print()
+                hour += Int(floor(Double(minute) / 60.0))
+                minute = (60 + minute % 60) % 60
+                return .init( max(0, min(hour, 23)), max(0, min(60, minute)) )
+                }
+        
     }
     
     private static var _main: Schedule!

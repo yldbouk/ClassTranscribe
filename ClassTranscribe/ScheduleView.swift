@@ -15,6 +15,8 @@ struct ScheduleView: View {
     
     static let hourHeight = 70.0
     @State var dragging = false
+    @State var originalTime: Schedule.Time? = nil
+
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -111,7 +113,7 @@ struct ScheduleView: View {
                                     let event = Schedule.Meeting(
                                         title: "New Meeting",
                                         startTime: Schedule.Time(start.0, start.1),
-                                        duration: min(60, determineMaximumDuration(quarterhour*15, forDay: day)),
+                                        duration: min(60, ScheduleView.determineMaximumDuration(quarterhour*15, forDay: day)),
                                         popover: true
                                     )
                                     schedule.schedule[day].append(event)
@@ -130,12 +132,25 @@ struct ScheduleView: View {
                                                     startTime: Schedule.Time(start.0, start.1),
                                                     duration: 0
                                                 )
+                                                
+                                                originalTime = event.startTime
                                                 schedule.schedule[day].append(event)
                                             }
                                             dragging = true
-                                            let maxDuration = determineMaximumDuration(quarterhour * 15, forDay: day)
                                             let newDuration = Int(value.location.y / (ScheduleView.hourHeight / 4)) * 15
-                                            schedule.schedule[day][schedule.schedule[day].count - 1].duration = min(max(newDuration, 15), maxDuration)
+                                                                                    
+                                            if(value.location.y >= 0) {
+                                                let maxDuration = ScheduleView.determineMaximumDuration(quarterhour * 15, forDay: day)
+                                                schedule.schedule[day][schedule.schedule[day].count - 1].duration = min(max(newDuration, 15), maxDuration)
+                                                schedule.schedule[day][schedule.schedule[day].count - 1].startTime = originalTime!
+                                            } else {
+                                                let event = schedule.schedule[day][schedule.schedule[day].count - 1]
+                                                let endTime = event.startTimeInMinutes + event.duration
+                                                let minDuration = ScheduleView.determineMinimumDuration(endTime, id: event.id, forDay: day)
+                                                schedule.schedule[day][schedule.schedule[day].count - 1].duration = max(min(-minDuration, -newDuration), 15)
+                                                schedule.schedule[day][schedule.schedule[day].count - 1].startTime = originalTime!.relative(max(minDuration, newDuration))
+                                            }
+                                                                                    
                                         }
                                         .onEnded { _ in
                                             guard dragging else { return }
@@ -144,6 +159,7 @@ struct ScheduleView: View {
                                             schedule.schedule[day][schedule.schedule[day].count - 1].popover = true
                                             
                                             dragging = false
+                                            originalTime = nil
                                         })
                         }
                     }
@@ -152,10 +168,10 @@ struct ScheduleView: View {
         }
        
     struct EventCell: View {
-        enum Keys: Int { case title, startDate, duration, popover, remove }
+        enum Keys: Int { case title, duration, popover, remove }
         @ObservedObject var schedule = Schedule.main
         @State var title: String
-        @State var startDate: Date
+        @Binding var startDate: Date
         let id: UUID
         var duration: Int
         @State var trueDuration: Int
@@ -171,21 +187,18 @@ struct ScheduleView: View {
             self.day = day
             self._title = State.init(initialValue: event.title)
             self.id = event.id
-            self._startDate = State.init(initialValue: event.startDate)
+            self._startDate = Binding(get: {
+                            Schedule.main.schedule[day].first(where: {$0.id == event.id})?.startDate ?? Date.now
+                        }, set: {
+                            let i = Schedule.main.schedule[day].firstIndex(where: {$0.id == event.id})!
+                            Schedule.main.schedule[day][i].startDate = $0
+                        })
             self.duration = event.duration
             self._trueDuration = State.init(initialValue: self.duration)
             self.shouldPopover = event.popover
             
             startOffset = (Double(Calendar.current.component(.hour, from: event.startDate)) * hourHeight) + 
                 (hourHeight * (Double(Calendar.current.component(.minute, from: event.startDate)) / 60))
-        }
-        
-        func determineMaximumDuration(_ startTime: Int, forDay: Int) -> Int {
-            
-            let daySorted = schedule.schedule[forDay].sorted(by: { $0.startTimeInMinutes < $1.startTimeInMinutes })
-            let nextEvent = daySorted.first(where: { $0.startTimeInMinutes > startTime })
-            return max(15, (nextEvent?.startTimeInMinutes ?? 1440) - startTime)
-            
         }
         
         func presentPopover() { popover = true; didChange(.popover) }
@@ -196,11 +209,7 @@ struct ScheduleView: View {
             case .title:
                 schedule.schedule[day][i].title = title
                 break
-            case .startDate:
-                schedule.schedule[day][i].startDate = startDate
-                break
             case .duration:
-                schedule.schedule[day][i].duration = trueDuration
                 break
             case .popover:
                 schedule.schedule[day][i].popover = false
@@ -224,8 +233,6 @@ struct ScheduleView: View {
                      selection: $startDate,
                      displayedComponents: [.hourAndMinute]
                  )
-                 .onChange(of: startDate) { didChange(.startDate) }
-
                 Stepper(
                     "Duration: \(duration) mins",
                     value: $trueDuration,
@@ -255,6 +262,10 @@ struct ScheduleView: View {
                     .frame(alignment: .topLeading)
                 
             }
+            
+            
+            
+            
             .onAppear { if shouldPopover { presentPopover() }}
             .onChange(of: shouldPopover) { presentPopover() }
             .onChange(of: duration){ trueDuration = duration }
@@ -305,11 +316,15 @@ struct ScheduleView: View {
         
         
         
-    func determineMaximumDuration(_ startTime: Int, forDay: Int) -> Int {
-        
-        let daySorted = schedule.schedule[forDay].sorted(by: { $0.startTimeInMinutes < $1.startTimeInMinutes })
+    static func determineMaximumDuration(_ startTime: Int, forDay: Int) -> Int {
+        let daySorted = Schedule.main.schedule[forDay].sorted(by: { $0.startTimeInMinutes < $1.startTimeInMinutes })
         let nextEvent = daySorted.first(where: { $0.startTimeInMinutes > startTime })
         return max(15,(nextEvent?.startTimeInMinutes ?? 1440) - startTime)
-        
     }
+    static func determineMinimumDuration(_ endTime: Int, id: UUID, forDay: Int) -> Int {
+           let daySorted = Schedule.main.schedule[forDay].sorted(by: { $0.startTimeInMinutes < $1.startTimeInMinutes })
+           let i = daySorted.firstIndex(where: {$0.id == id}) ?? 0
+           let prevEvent = i != 0 ? daySorted[i-1] : nil
+           return (prevEvent?.startTimeInMinutes ?? 0) + (prevEvent?.duration ?? 0) - endTime
+       }
 }
