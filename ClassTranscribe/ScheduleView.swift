@@ -128,7 +128,7 @@ struct ScheduleView: View {
                                                 print("Creating New Meeting: \(Schedule.weekdayNames[day]) at \(start.0):\(start.1)")
                                                 
                                                 let event = Schedule.Meeting(
-                                                    title: "New Meeting", 
+                                                    title: "New Meeting",
                                                     startTime: Schedule.Time(start.0, start.1),
                                                     duration: 0
                                                 )
@@ -137,8 +137,9 @@ struct ScheduleView: View {
                                                 schedule.schedule[day].append(event)
                                             }
                                             dragging = true
+                                            
                                             let newDuration = Int(value.location.y / (ScheduleView.hourHeight / 4)) * 15
-                                                                                    
+                                            
                                             if(value.location.y >= 0) {
                                                 let maxDuration = ScheduleView.determineMaximumDuration(quarterhour * 15, forDay: day)
                                                 schedule.schedule[day][schedule.schedule[day].count - 1].duration = min(max(newDuration, 15), maxDuration)
@@ -147,20 +148,23 @@ struct ScheduleView: View {
                                                 let event = schedule.schedule[day][schedule.schedule[day].count - 1]
                                                 let endTime = event.startTimeInMinutes + event.duration
                                                 let minDuration = ScheduleView.determineMinimumDuration(endTime, id: event.id, forDay: day)
+                                                //                                            print(newDuration, minDuration)
                                                 schedule.schedule[day][schedule.schedule[day].count - 1].duration = max(min(-minDuration, -newDuration), 15)
+                                                print(-minDuration, -newDuration)
                                                 schedule.schedule[day][schedule.schedule[day].count - 1].startTime = originalTime!.relative(max(minDuration, newDuration))
                                             }
-                                                                                    
+                                            
                                         }
                                         .onEnded { _ in
                                             guard dragging else { return }
-                                            ScheduleWait.main.scheduleChanged()
+                                            // ScheduleWait.main.scheduleChanged()
                                             
                                             schedule.schedule[day][schedule.schedule[day].count - 1].popover = true
-                                            
+                                            print(schedule.schedule[day][schedule.schedule[day].count - 1])
                                             dragging = false
                                             originalTime = nil
-                                        })
+                                        }
+                                )
                         }
                     }
                 }
@@ -180,6 +184,10 @@ struct ScheduleView: View {
         let day: Int
         let startOffset: Double
         
+        @State var dragging = false
+        @State var originalTime: Schedule.Time? = nil
+        @State var originalDuration: Int = 0
+        
         init(
             _ day: Int,
             _ event: Schedule.Meeting
@@ -197,8 +205,8 @@ struct ScheduleView: View {
             self._trueDuration = State.init(initialValue: self.duration)
             self.shouldPopover = event.popover
             
-            startOffset = (Double(Calendar.current.component(.hour, from: event.startDate)) * hourHeight) + 
-                (hourHeight * (Double(Calendar.current.component(.minute, from: event.startDate)) / 60))
+            startOffset = (Double(Calendar.current.component(.hour, from: event.startDate)) * hourHeight) +
+            (hourHeight * (Double(Calendar.current.component(.minute, from: event.startDate)) / 60))
         }
         
         func presentPopover() { popover = true; didChange(.popover) }
@@ -210,6 +218,7 @@ struct ScheduleView: View {
                 schedule.schedule[day][i].title = title
                 break
             case .duration:
+                schedule.schedule[day][i].duration = trueDuration
                 break
             case .popover:
                 schedule.schedule[day][i].popover = false
@@ -236,7 +245,7 @@ struct ScheduleView: View {
                 Stepper(
                     "Duration: \(duration) mins",
                     value: $trueDuration,
-                    in: 15...determineMaximumDuration((Calendar.current.component(.hour, from: startDate) * 60) + Calendar.current.component(.minute, from: startDate), forDay: day),
+                    in: 15...determineMaximumDuration(Schedule.timeFrom(startDate).inMinutes(), forDay: day),
                     step: 5
                 )
                 .onChange(of: trueDuration) { didChange(.duration) }
@@ -253,39 +262,88 @@ struct ScheduleView: View {
             }
         }
         
+        func resizeDrag(_ up: Bool, _ inside: Bool) {
+            guard inside else { NSCursor.pop(); return }
+            NSCursor.resizeUpDown.push()
+        }
+        
         var body: some View {
-            VStack(alignment: .leading) {
-                // Text("\(event.startTime.0):\(event.startTime.1)")
-                Text(title)
-                    .bold()
-                    .padding(.leading, 5)
-                    .frame(alignment: .topLeading)
-                
+            ZStack(alignment: .leading) {
+            Text(title)
+                .bold()
+                .padding(.leading, 5)
+                .frame(alignment: .topLeading)
+                        
+            Rectangle() // for adjusting start time
+//              .foregroundStyle(.orange)
+                .opacity(0.001)
+                .frame(height: 5, alignment: .bottom)
+                .offset(x:0,y: -(Double(duration) / 60 * ScheduleView.hourHeight))
+                .onHover { resizeDrag(false, $0) }
+                .gesture(
+                    DragGesture(minimumDistance: 0)
+                        .onChanged { value in
+                            if(!dragging) {
+                                originalTime = Schedule.timeFrom(startDate)
+                                originalDuration = duration
+                            }
+                            dragging = true
+                            let newDuration = Int(value.location.y / (ScheduleView.hourHeight / 4)) * 15 + (originalDuration - 15)
+                            let maxStart = originalTime!.relative(originalDuration - 15)
+                            let minStart = ScheduleView.determineMinimumDuration(originalTime!.inMinutes(), id: id, forDay: day)
+                                        
+                            trueDuration = max(originalDuration-max(newDuration, minStart), 15)
+                            startDate = Schedule.dateFrom(min(maxStart, originalTime!.relative(max(newDuration, minStart))))
+                                       
+                            didChange(.duration)
+                        }
+                        .onEnded { _ in
+                            dragging = false
+                            originalTime = nil
+                            originalDuration = 0
+                        }
+                )
+                .offset(x:0,y: (Double(duration) / 60 * ScheduleView.hourHeight)-5)
+
+            Rectangle() // for adjusting duration
+//                .foregroundStyle(.red)
+                .opacity(0.001)
+                .frame(height: 5)
+                .offset(x:0,y: Double(duration) / 60 * ScheduleView.hourHeight - 10)
+                .onHover { resizeDrag(false, $0) } // TODO: determine which cursor
+                .gesture( // create an event by dragging
+                    DragGesture(minimumDistance: 0)
+                        .onChanged { value in
+                            let newDuration = Int(value.location.y / (ScheduleView.hourHeight / 4)) * 15 + 15
+                            let maxDuration = ScheduleView.determineMaximumDuration(Schedule.timeFrom(startDate).inMinutes(), forDay: day)
+                            trueDuration = min(max(newDuration, 15), maxDuration)
+                                                                        
+                            didChange(.duration)
+                        }
+                        .onEnded { _ in
+                            // TODO: Probably need to update timers
+                        }
+                )
             }
-            
-            
-            
-            
             .onAppear { if shouldPopover { presentPopover() }}
             .onChange(of: shouldPopover) { presentPopover() }
             .onChange(of: duration){ trueDuration = duration }
             .font(.caption)
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(0)
-            .frame(height: Double(duration) / 60 * hourHeight, alignment: .top)
-            
+            .frame(height: Double(duration) / 60 * ScheduleView.hourHeight, alignment: .top)
+//            .border(.yellow)
             .background(
                 RoundedRectangle(cornerRadius: 8)
                     .fill(.secondary).opacity(0.5)
             )
             .padding(.horizontal, 1)
-            //        .border(.red)
+//            .border(.red)
             .frame(maxHeight: .infinity, alignment: .topLeading)
             .onTapGesture { popover = true }
             .popover(isPresented: $popover) { popoverContent }
-            .offset(x: 0, y: startOffset + (hourHeight / 8)) // accounting for hour label padding
+            .offset(x: 0, y: startOffset + (ScheduleView.hourHeight / 8)) // accounting for hour label padding
         }
-        
     }
         
     
@@ -322,9 +380,11 @@ struct ScheduleView: View {
         return max(15,(nextEvent?.startTimeInMinutes ?? 1440) - startTime)
     }
     static func determineMinimumDuration(_ endTime: Int, id: UUID, forDay: Int) -> Int {
-           let daySorted = Schedule.main.schedule[forDay].sorted(by: { $0.startTimeInMinutes < $1.startTimeInMinutes })
-           let i = daySorted.firstIndex(where: {$0.id == id}) ?? 0
-           let prevEvent = i != 0 ? daySorted[i-1] : nil
-           return (prevEvent?.startTimeInMinutes ?? 0) + (prevEvent?.duration ?? 0) - endTime
+        let daySorted = Schedule.main.schedule[forDay].sorted(by: { $0.startTimeInMinutes < $1.startTimeInMinutes })
+        let i = daySorted.firstIndex(where: {$0.id == id}) ?? 0
+        let prevEvent = i != 0 ? daySorted[i-1] : nil
+        return (prevEvent?.startTimeInMinutes ?? 0) + (prevEvent?.duration ?? 0) - endTime
        }
 }
+
+#Preview { ScheduleView() }

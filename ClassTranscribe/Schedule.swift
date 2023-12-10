@@ -92,10 +92,10 @@ class Schedule: ObservableObject {
                 return .init( max(0, min(hour, 23)), max(0, min(60, minute)) )
                 }
         
+        func inMinutes() -> Int { hour * 60 + minute }
+        
     }
-    
-    private static var _main: Schedule!
-    
+        
     @Published var enabledByUser = UserDefaults.standard.bool(forKey: "scheduleEnabled") {
         didSet { UserDefaults.standard.set(enabledByUser, forKey: "scheduleEnabled") }
     }
@@ -112,10 +112,8 @@ class Schedule: ObservableObject {
         return Schedule.Time(h, m)
     }
     
-    // TODO: Replace (all occurences) with static let main: Schedule = .init()
-    public static var main: Schedule {
-        get { return _main }
-    }
+    // TODO: Replace all occurences with this format
+    static let main: Schedule = .init()
     
     public static let emptySchedule: [[Schedule.Meeting]] =
     [
@@ -130,14 +128,9 @@ class Schedule: ObservableObject {
         
     public static let weekdayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
     
-    @Published var schedule = Meeting.from(UserDefaults.standard.data(forKey: "schedule")) {
+    @Published var schedule = Meeting.from(UserDefaults.standard.data(forKey: "schedule")) /*{
         didSet { UserDefaults.standard.set(Meeting.toData(self.schedule), forKey: "schedule") }
-    }
-    
-    
-    init() {
-        Self._main = self
-    }
+    }*/
     
     var isEmpty: Bool { UserDefaults.standard.data(forKey: "schedule")?.count ?? 22 < 23 }
     

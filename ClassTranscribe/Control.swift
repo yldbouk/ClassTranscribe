@@ -20,7 +20,7 @@ class Control {
 //    private var currentState: AppState = .Idle
 //    var microphone: Microphone!
     var menuLabel: MenuBarLabel!
-    var schedule: Schedule!
+    var schedule = Schedule.main
     var nextClass: Schedule.Meeting?
     var trackedEntry: Entry?
 
@@ -41,7 +41,6 @@ class Control {
         DispatchQueue.main.async { [self] in
             print("Schedule enabled, scheduling...")
             menuLabel.recordingEnabled = true
-            schedule = Schedule()
             if (schedule.enabledByUser && !schedule.isEmpty) {
                 nextClass = schedule.nextMeeting()
                 menuLabel.update(to: .Waiting, forOperation: nextClass!.title)
@@ -53,7 +52,7 @@ class Control {
     func EntryCompleteCallback(_ entry: Entry){
 //        entries.removeAll(where: { $0 == entry })
         determineTrackedEntry()
-        if(schedule == nil) {
+        if(schedule.enabledByUser && !schedule.isEmpty) {
             if trackedEntry == nil { menuLabel.update(to: .Idle) }
         } else {
             guard ScheduleWait.main.queue.isEmpty else { return }
