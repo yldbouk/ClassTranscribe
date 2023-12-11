@@ -267,6 +267,13 @@ struct ScheduleView: View {
             NSCursor.resizeUpDown.set()
         }
         
+        func determineMaxStartTime() -> Int {
+                    let daySorted = Schedule.main.schedule[day].sorted(by: { $0.startTimeInMinutes < $1.startTimeInMinutes })
+                    let i = daySorted.firstIndex(where: {$0.id == id}) ?? 0
+                    let nextEvent = i != (daySorted.count-1) ? daySorted[i+1] : nil
+                    return (nextEvent?.startTimeInMinutes ?? 1440) - duration
+                }
+        
         var body: some View {
             ZStack(alignment: .top) {
             Text(title)
@@ -318,8 +325,34 @@ struct ScheduleView: View {
                             dragging = false
                             originalTime = nil
                             originalDuration = 0
+                            ScheduleWait.main.scheduleChanged()
                         }
                 )
+                
+            Rectangle() // for moving event
+//                .foregroundStyle(.yellow)
+                .opacity(0.001)
+                .frame(height: Double(duration) / 60 * ScheduleView.hourHeight - 10)
+                .offset(x:0,y: 5)
+                .onTapGesture { popover = true }
+                .gesture(
+                    DragGesture(minimumDistance: 0, coordinateSpace: .global)
+                        .onChanged { value in
+                            if(!dragging) {
+                                originalTime = Schedule.timeFrom(startDate)
+                            }
+                            dragging = true
+                            let newStart = Int((value.location.y - value.startLocation.y) / (ScheduleView.hourHeight / 4)) * 15
+                            let maxStart = Schedule.Time(determineMaxStartTime())!
+                            let minStart = ScheduleView.determineMinimumDuration(originalTime!.inMinutes(), id: id, forDay: day)
+                            startDate = Schedule.dateFrom(min(maxStart, originalTime!.relative(max(newStart, minStart))))
+                        }
+                        .onEnded { _ in
+                            dragging = false
+                            originalTime = nil
+                            ScheduleWait.main.scheduleChanged()
+                        }
+                    )
             }
             .onAppear { if shouldPopover { presentPopover() }}
             .onChange(of: shouldPopover) { presentPopover() }
@@ -336,7 +369,6 @@ struct ScheduleView: View {
             .padding(.horizontal, 1)
 //            .border(.red)
             .frame(maxHeight: .infinity, alignment: .topLeading)
-            .onTapGesture { popover = true }
             .popover(isPresented: $popover) { popoverContent }
             .offset(x: 0, y: startOffset + (ScheduleView.hourHeight / 8)) // accounting for hour label padding
         }

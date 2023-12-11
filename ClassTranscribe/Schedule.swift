@@ -72,6 +72,13 @@ class Schedule: ObservableObject {
         init(_ h: Int, _ m: Int) {
             hour = h; minute = m
         }
+        
+        init?(_ minutes: Int) {
+            guard (minutes >= 0) && (minutes <= 1440) else { return nil }
+            hour = minutes / 60
+            minute = minutes % 60
+        }
+        
         static func == (t1: Time, t2: Time) -> Bool {
             return t1.hour == t2.hour && t1.minute == t2.minute
         }
