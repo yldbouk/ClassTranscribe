@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import AVFoundation
 import SwiftUI
 import SwiftWhisper
 
@@ -21,9 +20,8 @@ class Control {
 //    private var currentState: AppState = .Idle
 //    var microphone: Microphone!
     var menuLabel: MenuBarLabel!
-    var schedule: Schedule!
+    var schedule = Schedule.main
     var nextClass: Schedule.Meeting?
-    var waiter: ScheduleWait!
     var trackedEntry: Entry?
 
     
@@ -41,13 +39,12 @@ class Control {
     
     func microphoneEnabled(){
         DispatchQueue.main.async { [self] in
-            print("User allowed microphone")
+            print("Schedule enabled, scheduling...")
             menuLabel.recordingEnabled = true
-            schedule = Schedule()
-            if (schedule != nil) {
+            if (schedule.enabledByUser && !schedule.isEmpty) {
                 nextClass = schedule.nextMeeting()
-                menuLabel.update(to: .Waiting, forOperation: nextClass!.course)
-                waiter = ScheduleWait(nextClass!)
+                menuLabel.update(to: .Waiting, forOperation: nextClass!.title)
+                ScheduleWait.main.ScheduleRecording(nextClass!)
             }
         }
     }
@@ -55,13 +52,13 @@ class Control {
     func EntryCompleteCallback(_ entry: Entry){
 //        entries.removeAll(where: { $0 == entry })
         determineTrackedEntry()
-        if(schedule == nil) {
+        if(schedule.enabledByUser && !schedule.isEmpty) {
             if trackedEntry == nil { menuLabel.update(to: .Idle) }
         } else {
-            guard waiter.queue.isEmpty else { return }
+            guard ScheduleWait.main.queue.isEmpty else { return }
             nextClass = schedule.nextMeeting()
 //            menuLabel.update(to: .Waiting, forOperation: nextClass?.course)
-            waiter.ScheduleRecording(nextClass!)
+            ScheduleWait.main.ScheduleRecording(nextClass!)
         }
     }
     

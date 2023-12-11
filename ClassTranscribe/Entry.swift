@@ -138,7 +138,7 @@ class Entry : WhisperDelegate, Equatable {
     }
     
     func transcribe(frames: [Float]) {
-        updateLabel(to: .Transcribe, forOperation: self.forMeeting?.course)
+        updateLabel(to: .Transcribe, forOperation: self.forMeeting?.title)
         Task {
             let appsupport = FileManager.default.urls(for:.applicationSupportDirectory, in: .userDomainMask).first
             let model: URL = appsupport!.appending(path: "ClassTranscribe/model.bin")
@@ -151,7 +151,7 @@ class Entry : WhisperDelegate, Equatable {
     }
     
     func transcribe(url: URL)  {
-        updateLabel(to: .Transcribe, forOperation: self.forMeeting?.course)
+        updateLabel(to: .Transcribe, forOperation: self.forMeeting?.title)
         Task {
             let appsupport = FileManager.default.urls(for:.applicationSupportDirectory, in: .userDomainMask).first
             let model: URL = appsupport!.appending(path: "ClassTranscribe/model.bin")
@@ -179,7 +179,7 @@ class Entry : WhisperDelegate, Equatable {
     // Progress updates as a percentage from 0-1
     func whisper(_ aWhisper: Whisper, didUpdateProgress progress: Double) {
         if(Control.main.trackedEntry == self) {
-            updateLabel(to: .Transcribe, percentage: String(format: "%.0f%%", progress*100), forOperation: forMeeting?.course)
+            updateLabel(to: .Transcribe, percentage: String(format: "%.0f%%", progress*100), forOperation: forMeeting?.title)
         }
     }
 
@@ -189,7 +189,7 @@ class Entry : WhisperDelegate, Equatable {
     // Finished transcribing, includes all transcribed segments of text
     func whisper(_ aWhisper: Whisper, didCompleteWithSegments segments: [Segment]) {
         print("Entry \(id): Transcription Complete")
-        updateLabel(to: .Transcribe, percentage: "100%", forOperation: self.forMeeting?.course)
+        updateLabel(to: .Transcribe, percentage: "100%", forOperation: self.forMeeting?.title)
     var resData:String = "WEBVTT"
         segments.forEach { segment in
             // 00:00:00.000

@@ -13,6 +13,8 @@
 		BF4AF3332AE8EE3E0074CF17 /* Schedule.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF4AF3322AE8EE3E0074CF17 /* Schedule.swift */; };
 		BF5E96B82AF011E900AB8BE4 /* ScheduleWait.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF5E96B72AF011E900AB8BE4 /* ScheduleWait.swift */; };
 		BF6C2F842AFDF2FF000B919E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF6C2F832AFDF2FF000B919E /* AppDelegate.swift */; };
+		BF7D68782B028E1100B8EBC9 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7D68772B028E1100B8EBC9 /* Settings.swift */; };
+		BF7D687B2B02D85700B8EBC9 /* SettingsAccess in Frameworks */ = {isa = PBXBuildFile; productRef = BF7D687A2B02D85700B8EBC9 /* SettingsAccess */; };
 		BF82C1B82AD5AFF1006E6DB8 /* MenuBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF82C1B72AD5AFF1006E6DB8 /* MenuBar.swift */; };
 		BF82C1BE2AD5AFF3006E6DB8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BF82C1BD2AD5AFF3006E6DB8 /* Assets.xcassets */; };
 		BF82C1C12AD5AFF3006E6DB8 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BF82C1C02AD5AFF3006E6DB8 /* Preview Assets.xcassets */; };
@@ -21,6 +23,7 @@
 		BF82C1D82AD5AFF3006E6DB8 /* ClassTranscribeUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF82C1D72AD5AFF3006E6DB8 /* ClassTranscribeUITestsLaunchTests.swift */; };
 		BF82C1E92AD5C592006E6DB8 /* Microphone.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF82C1E82AD5C592006E6DB8 /* Microphone.swift */; };
 		BF82C1EB2AD5D3F4006E6DB8 /* Control.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF82C1EA2AD5D3F4006E6DB8 /* Control.swift */; };
+		BF8A3B102B0BC97D00B72E37 /* ScheduleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF8A3B0F2B0BC97D00B72E37 /* ScheduleView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -46,6 +49,7 @@
 		BF4AF3322AE8EE3E0074CF17 /* Schedule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Schedule.swift; sourceTree = "<group>"; };
 		BF5E96B72AF011E900AB8BE4 /* ScheduleWait.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleWait.swift; sourceTree = "<group>"; };
 		BF6C2F832AFDF2FF000B919E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		BF7D68772B028E1100B8EBC9 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		BF82C1B42AD5AFF1006E6DB8 /* ClassTranscribe.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ClassTranscribe.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BF82C1B72AD5AFF1006E6DB8 /* MenuBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBar.swift; sourceTree = "<group>"; };
 		BF82C1BD2AD5AFF3006E6DB8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -58,6 +62,7 @@
 		BF82C1D72AD5AFF3006E6DB8 /* ClassTranscribeUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClassTranscribeUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		BF82C1E82AD5C592006E6DB8 /* Microphone.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Microphone.swift; sourceTree = "<group>"; };
 		BF82C1EA2AD5D3F4006E6DB8 /* Control.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Control.swift; sourceTree = "<group>"; };
+		BF8A3B0F2B0BC97D00B72E37 /* ScheduleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,6 +71,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BF48D85B2AE2E47900B5208B /* SwiftWhisper in Frameworks */,
+				BF7D687B2B02D85700B8EBC9 /* SettingsAccess in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -109,6 +115,8 @@
 		BF82C1B62AD5AFF1006E6DB8 /* ClassTranscribe */ = {
 			isa = PBXGroup;
 			children = (
+				BF8A3B0F2B0BC97D00B72E37 /* ScheduleView.swift */,
+				BF7D68772B028E1100B8EBC9 /* Settings.swift */,
 				BF5E96B72AF011E900AB8BE4 /* ScheduleWait.swift */,
 				BF4AF3322AE8EE3E0074CF17 /* Schedule.swift */,
 				BF0C85B92AEA2B3300328069 /* Entry.swift */,
@@ -167,6 +175,7 @@
 			name = ClassTranscribe;
 			packageProductDependencies = (
 				BF48D85A2AE2E47900B5208B /* SwiftWhisper */,
+				BF7D687A2B02D85700B8EBC9 /* SettingsAccess */,
 			);
 			productName = ClassTranscribe;
 			productReference = BF82C1B42AD5AFF1006E6DB8 /* ClassTranscribe.app */;
@@ -242,6 +251,7 @@
 			mainGroup = BF82C1AB2AD5AFF1006E6DB8;
 			packageReferences = (
 				BF48D8592AE2E47900B5208B /* XCRemoteSwiftPackageReference "SwiftWhisper" */,
+				BF7D68792B02D85700B8EBC9 /* XCRemoteSwiftPackageReference "SettingsAccess" */,
 			);
 			productRefGroup = BF82C1B52AD5AFF1006E6DB8 /* Products */;
 			projectDirPath = "";
@@ -290,7 +300,9 @@
 				BF82C1E92AD5C592006E6DB8 /* Microphone.swift in Sources */,
 				BF82C1EB2AD5D3F4006E6DB8 /* Control.swift in Sources */,
 				BF48D85D2AE2F54800B5208B /* FormatConverter.swift in Sources */,
+				BF8A3B102B0BC97D00B72E37 /* ScheduleView.swift in Sources */,
 				BF5E96B82AF011E900AB8BE4 /* ScheduleWait.swift in Sources */,
+				BF7D68782B028E1100B8EBC9 /* Settings.swift in Sources */,
 				BF4AF3332AE8EE3E0074CF17 /* Schedule.swift in Sources */,
 				BF82C1B82AD5AFF1006E6DB8 /* MenuBar.swift in Sources */,
 			);
@@ -621,6 +633,14 @@
 				minimumVersion = 1.2.0;
 			};
 		};
+		BF7D68792B02D85700B8EBC9 /* XCRemoteSwiftPackageReference "SettingsAccess" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/orchetect/SettingsAccess";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.4.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -628,6 +648,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = BF48D8592AE2E47900B5208B /* XCRemoteSwiftPackageReference "SwiftWhisper" */;
 			productName = SwiftWhisper;
+		};
+		BF7D687A2B02D85700B8EBC9 /* SettingsAccess */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BF7D68792B02D85700B8EBC9 /* XCRemoteSwiftPackageReference "SettingsAccess" */;
+			productName = SettingsAccess;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
