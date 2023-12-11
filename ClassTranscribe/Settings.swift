@@ -18,7 +18,7 @@ struct SettingsView: View {
                 }
             
             SavingSettingsView()
-                .frame(width: 300, height: 150)
+                .frame(width: 450, height: 300)
                 .tabItem {
                     Label("Saving", systemImage: "square.and.arrow.down")
                 }
@@ -41,9 +41,13 @@ struct SettingsView: View {
      
      
     struct SavingSettingsView: View {
-        @AppStorage("defaultRecordingSaveLocation") var defaultRecordingSaveLocation = FileManager.default.urls(for:.documentDirectory, in: .userDomainMask).first!
-        @AppStorage("defaultTranscriptionSaveLocation") var defaultTranscriptionSaveLocation = FileManager.default.urls(for:.documentDirectory, in: .userDomainMask).first!
-        @AppStorage("writeWhileTranscribing") var writeWhileTranscribing = false
+        @AppStorage("unscheduledSaveLocation") var unscheduledSaveLocation = FileManager.default.urls(for:.documentDirectory, in: .userDomainMask).first!
+        @AppStorage("unscheduledRecordingsSubpath") var unscheduledRecordingsSubpath = ""
+        @AppStorage("unscheduledTranscriptionsSubpath") var unscheduledTranscriptionsSubpath = ""
+        
+        @AppStorage("scheduledSaveLocation") var scheduledSaveLocation = FileManager.default.urls(for:.documentDirectory, in: .userDomainMask).first!
+        @AppStorage("scheduledRecordingsSubpath") var scheduledRecordingsSubpath = ""
+        @AppStorage("scheduledTranscriptionsSubpath") var scheduledTranscriptionsSubpath = ""
         
         func saveLocation(_ name: String, original: URL) -> URL{
             let panel = NSOpenPanel()
@@ -55,26 +59,50 @@ struct SettingsView: View {
             guard panel.runModal() == .OK else { return original }
             return panel.url!
         }
-
+        
         var body: some View {
             VStack {
-                Spacer()
-                // Default Recording Location
+                Text("Unscheduled Recordings")
+                    .bold()
+                    .font(.title2)
                 HStack {
-                    Text("Default Recording Folder: \(defaultRecordingSaveLocation.lastPathComponent)")
-                    Button("Change") {  defaultRecordingSaveLocation = saveLocation("recording", original: defaultRecordingSaveLocation) }
+                    Text("Save To: \(unscheduledSaveLocation.lastPathComponent)")
+                    Button("Change") {  unscheduledSaveLocation = saveLocation("recording", original: unscheduledSaveLocation) }
                 }
-                Spacer()
-                // Default Transcription Location
                 HStack {
-                    Text("Default Transcription Folder: \(defaultTranscriptionSaveLocation.lastPathComponent)")
-                    Button("Change") { defaultTranscriptionSaveLocation = saveLocation("recording", original: defaultTranscriptionSaveLocation) }
+                    Text("Recordings Subpath:")
+                    TextField("Recordings/%MMM d YYYY, h:mm a%.m4a", text: $unscheduledRecordingsSubpath)
                 }
-                Spacer()
-                Toggle(isOn: $writeWhileTranscribing){Text("Simultaneously Transcribe and Write")}
-                Spacer()
-
-            }
+                HStack {
+                    Text("Transcriptions Subpath:")
+                    TextField("Transcriptions/%MMM d YYYY, h:mm a%.txt", text: $unscheduledTranscriptionsSubpath)
+                }
+                Text("Use placeholders to fill in identifying information about the entry. Use ISO8601 formats.")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                
+            Divider()
+                Text("Scheduled Recordings")
+                    .bold()
+                    .font(.title2)
+                HStack {
+                    Text("Save To: \(scheduledSaveLocation.lastPathComponent)")
+                    Button("Change") {  scheduledSaveLocation = saveLocation("recording", original: scheduledSaveLocation) }
+                }
+                HStack {
+                    Text("Recordings Subpath:")
+                    TextField("%name%/Recordings/%MMM dd%.m4a", text: $scheduledRecordingsSubpath)
+                }
+                HStack {
+                    Text("Transcriptions Subpath:")
+                    TextField("%name%/Transcriptions/%MMM dd%.txt", text: $scheduledTranscriptionsSubpath)
+                }
+                Text("Use placeholders to fill in identifying information about the entry. Use ISO8601 formats.\n• Use %name% to fill in the meeting name.")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                    
+                }
+            .padding(.horizontal, 10)
         }
     }
      
@@ -93,3 +121,4 @@ struct SettingsView: View {
 }
 
 #Preview { SettingsView() }
+#Preview { SettingsView.SavingSettingsView().frame(width:450, height:300) }
