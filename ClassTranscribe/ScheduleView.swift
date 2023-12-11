@@ -263,35 +263,52 @@ struct ScheduleView: View {
         }
         
         func resizeDrag(_ up: Bool, _ inside: Bool) {
-            guard inside else { NSCursor.pop(); return }
-            NSCursor.resizeUpDown.push()
+            guard inside else { NSCursor.arrow.set(); return }
+            NSCursor.resizeUpDown.set()
         }
         
         var body: some View {
-            ZStack(alignment: .leading) {
+            ZStack(alignment: .top) {
             Text(title)
                 .bold()
-                .padding(.leading, 5)
-                .frame(alignment: .topLeading)
-                        
+//                .padding(.leading, 5)
+
+                Rectangle() // for adjusting duration
+//                    .foregroundStyle(.red)
+                    .opacity(0.001)
+                    .frame(height: 5)
+                    .offset(x:0,y: Double(duration) / 60 * ScheduleView.hourHeight - 5)
+                    .onHover { resizeDrag(false, $0) } // TODO: determine which cursor
+                    .gesture( // create an event by dragging
+                        DragGesture(minimumDistance: 0)
+                            .onChanged { value in
+                                let newDuration = Int(value.location.y / (ScheduleView.hourHeight / 4)) * 15 + 15
+                                let maxDuration = ScheduleView.determineMaximumDuration(Schedule.timeFrom(startDate).inMinutes(), forDay: day)
+                                trueDuration = min(max(newDuration, 15), maxDuration)
+                                                                            
+                                didChange(.duration)
+                            }
+                            .onEnded { _ in
+                                ScheduleWait.main.scheduleChanged()
+                            }
+                    )
+                
             Rectangle() // for adjusting start time
-//              .foregroundStyle(.orange)
+//                .foregroundStyle(.orange)
                 .opacity(0.001)
                 .frame(height: 5, alignment: .bottom)
-                .offset(x:0,y: -(Double(duration) / 60 * ScheduleView.hourHeight))
                 .onHover { resizeDrag(false, $0) }
                 .gesture(
-                    DragGesture(minimumDistance: 0)
+                    DragGesture(minimumDistance: 0, coordinateSpace: .global)
                         .onChanged { value in
                             if(!dragging) {
                                 originalTime = Schedule.timeFrom(startDate)
                                 originalDuration = duration
                             }
                             dragging = true
-                            let newDuration = Int(value.location.y / (ScheduleView.hourHeight / 4)) * 15 + (originalDuration - 15)
+                            let newDuration = Int((value.location.y - value.startLocation.y) / (ScheduleView.hourHeight / 4)) * 15
                             let maxStart = originalTime!.relative(originalDuration - 15)
                             let minStart = ScheduleView.determineMinimumDuration(originalTime!.inMinutes(), id: id, forDay: day)
-                                        
                             trueDuration = max(originalDuration-max(newDuration, minStart), 15)
                             startDate = Schedule.dateFrom(min(maxStart, originalTime!.relative(max(newDuration, minStart))))
                                        
@@ -301,27 +318,6 @@ struct ScheduleView: View {
                             dragging = false
                             originalTime = nil
                             originalDuration = 0
-                        }
-                )
-                .offset(x:0,y: (Double(duration) / 60 * ScheduleView.hourHeight)-5)
-
-            Rectangle() // for adjusting duration
-//                .foregroundStyle(.red)
-                .opacity(0.001)
-                .frame(height: 5)
-                .offset(x:0,y: Double(duration) / 60 * ScheduleView.hourHeight - 10)
-                .onHover { resizeDrag(false, $0) } // TODO: determine which cursor
-                .gesture( // create an event by dragging
-                    DragGesture(minimumDistance: 0)
-                        .onChanged { value in
-                            let newDuration = Int(value.location.y / (ScheduleView.hourHeight / 4)) * 15 + 15
-                            let maxDuration = ScheduleView.determineMaximumDuration(Schedule.timeFrom(startDate).inMinutes(), forDay: day)
-                            trueDuration = min(max(newDuration, 15), maxDuration)
-                                                                        
-                            didChange(.duration)
-                        }
-                        .onEnded { _ in
-                            // TODO: Probably need to update timers
                         }
                 )
             }
